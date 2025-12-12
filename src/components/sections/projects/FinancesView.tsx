@@ -226,6 +226,93 @@ export const FinancesView = (props: FinancesViewProps) => {
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
+            <CardTitle>Расходы компании</CardTitle>
+            <Dialog open={isCompanyExpenseDialogOpen} onOpenChange={setIsCompanyExpenseDialogOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <Icon name="Plus" size={16} className="mr-2" />
+                  Добавить расход
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Добавить расход компании</DialogTitle>
+                </DialogHeader>
+                <form onSubmit={handleAddCompanyExpense} className="space-y-4">
+                  <div>
+                    <Label htmlFor="companyExpenseDesc">Описание</Label>
+                    <Input id="companyExpenseDesc" name="description" placeholder="Аренда офиса" required />
+                  </div>
+                  <div>
+                    <Label htmlFor="companyExpenseAmount">Сумма (₽)</Label>
+                    <Input id="companyExpenseAmount" name="amount" type="number" placeholder="50000" required />
+                  </div>
+                  <div>
+                    <Label htmlFor="companyExpenseCategory">Категория</Label>
+                    <select id="companyExpenseCategory" name="category" className="w-full border rounded-lg px-3 py-2" required>
+                      <option value="rent">Аренда</option>
+                      <option value="salary">Зарплата</option>
+                      <option value="fuel">Топливо</option>
+                      <option value="taxes">Налоги</option>
+                      <option value="other">Прочее</option>
+                    </select>
+                  </div>
+                  <div>
+                    <Label htmlFor="companyExpenseDate">Дата</Label>
+                    <Input id="companyExpenseDate" name="date" type="date" required />
+                  </div>
+                  <div>
+                    <Label htmlFor="companyExpenseReceipt">Чек (опционально)</Label>
+                    <Input id="companyExpenseReceipt" name="receipt" type="file" accept="image/*,.pdf" />
+                  </div>
+                  <Button type="submit" className="w-full">Добавить расход</Button>
+                </form>
+              </DialogContent>
+            </Dialog>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            {companyExpenses.length === 0 ? (
+              <p className="text-sm text-muted-foreground text-center py-4">Расходов компании пока нет</p>
+            ) : (
+              companyExpenses.slice(0, 5).map(expense => (
+                <div key={expense.id} className="flex justify-between items-start p-3 border rounded-lg">
+                  <div className="flex-1">
+                    <p className="font-medium text-sm">{expense.description}</p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <Badge variant="secondary" className="text-xs">
+                        {getCategoryName(expense.category)}
+                      </Badge>
+                      <span className="text-xs text-muted-foreground">{expense.date}</span>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <span className="font-semibold">{expense.amount.toLocaleString()} ₽</span>
+                    {expense.receipt && (
+                      <div className="mt-1">
+                        <Icon name="Paperclip" size={14} className="text-muted-foreground" />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+          {companyExpenses.length > 0 && (
+            <div className="mt-4 pt-4 border-t">
+              <div className="flex justify-between items-center">
+                <span className="font-semibold">Всего расходов:</span>
+                <span className="text-lg font-bold">{totalCompanyExpenses.toLocaleString()} ₽</span>
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
             <CardTitle>Статьи расходов</CardTitle>
             <Dialog open={isExpenseCategoryDialogOpen} onOpenChange={setIsExpenseCategoryDialogOpen}>
               <DialogTrigger asChild>
