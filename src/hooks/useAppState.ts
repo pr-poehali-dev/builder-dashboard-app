@@ -22,6 +22,9 @@ export const useAppState = () => {
   const [isProjectExpenseDialogOpen, setIsProjectExpenseDialogOpen] = useState(false);
   const [isProjectIncomeDialogOpen, setIsProjectIncomeDialogOpen] = useState(false);
   const [selectedProjectForTransaction, setSelectedProjectForTransaction] = useState<number | null>(null);
+  const [isStageExpenseDialogOpen, setIsStageExpenseDialogOpen] = useState(false);
+  const [isStageIncomeDialogOpen, setIsStageIncomeDialogOpen] = useState(false);
+  const [selectedStageForTransaction, setSelectedStageForTransaction] = useState<number | null>(null);
   const [viewingCategory, setViewingCategory] = useState<number | null>(null);
   const [selectedStage, setSelectedStage] = useState<number | null>(null);
   const [filterProject, setFilterProject] = useState<string>('all');
@@ -75,6 +78,12 @@ export const useAppState = () => {
     setIsProjectIncomeDialogOpen,
     selectedProjectForTransaction,
     setSelectedProjectForTransaction,
+    isStageExpenseDialogOpen,
+    setIsStageExpenseDialogOpen,
+    isStageIncomeDialogOpen,
+    setIsStageIncomeDialogOpen,
+    selectedStageForTransaction,
+    setSelectedStageForTransaction,
     viewingCategory,
     setViewingCategory,
     selectedStage,

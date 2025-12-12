@@ -27,6 +27,10 @@ interface UseAppHandlersProps {
   setIsProjectIncomeDialogOpen: (open: boolean) => void;
   selectedProjectForTransaction: number | null;
   setSelectedProjectForTransaction: (id: number | null) => void;
+  setIsStageExpenseDialogOpen: (open: boolean) => void;
+  setIsStageIncomeDialogOpen: (open: boolean) => void;
+  selectedStageForTransaction: number | null;
+  setSelectedStageForTransaction: (id: number | null) => void;
   filterProject: string;
   filterDate: string;
   filterMinAmount: string;
@@ -93,10 +97,14 @@ export const useAppHandlers = (props: UseAppHandlersProps) => {
     const newStage = {
       id: Date.now(),
       name: formData.get('stageName') as string,
+      budget: Number(formData.get('budget')) || 0,
       spent: 0,
+      income: 0,
       materials: 0,
       labor: 0,
-      expenses: []
+      other: 0,
+      expenses: [],
+      incomes: []
     };
     props.setProjects(props.projects.map(p => 
       p.id === projectId ? { ...p, stages: [...p.stages, newStage] } : p
@@ -152,6 +160,7 @@ export const useAppHandlers = (props: UseAppHandlersProps) => {
       description: formData.get('description') as string,
       amount: Number(formData.get('amount')),
       type: formData.get('type') as string,
+      date: new Date().toISOString().split('T')[0],
       receipt: receiptUrl
     };
 
@@ -164,7 +173,8 @@ export const useAppHandlers = (props: UseAppHandlersProps) => {
               const updatedExpenses = [...s.expenses, newExpense];
               const materials = updatedExpenses.filter(e => e.type === 'materials').reduce((sum, e) => sum + e.amount, 0);
               const labor = updatedExpenses.filter(e => e.type === 'labor').reduce((sum, e) => sum + e.amount, 0);
-              return { ...s, expenses: updatedExpenses, materials, labor, spent: materials + labor };
+              const other = updatedExpenses.filter(e => e.type === 'other').reduce((sum, e) => sum + e.amount, 0);
+              return { ...s, expenses: updatedExpenses, materials, labor, other, spent: materials + labor + other };
             }
             return s;
           })
@@ -174,7 +184,7 @@ export const useAppHandlers = (props: UseAppHandlersProps) => {
     }));
 
     props.setIsExpenseDialogOpen(false);
-    toast({ title: 'Расход добавлен', description: `Расход на ${newExpense.amount} ₽ добавлен` });
+    toast({ title: 'Расход добавлен', description: `Расход на ${newExpense.amount.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ₽ добавлен` });
   };
 
   const handleAddComment = (e: React.FormEvent<HTMLFormElement>) => {
@@ -350,6 +360,88 @@ export const useAppHandlers = (props: UseAppHandlersProps) => {
     toast({ title: 'Приход добавлен', description: `Приход ${amount.toLocaleString()} ₽ добавлен в проект` });
   };
 
+  const handleAddStageExpense = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const projectId = props.viewingProject;
+    const stageId = props.selectedStageForTransaction;
+    const files = (e.currentTarget.elements.namedItem('receipt') as HTMLInputElement).files;
+    const receiptUrl = files && files.length > 0 ? URL.createObjectURL(files[0]) : null;
+    const amount = Number(formData.get('amount'));
+    const type = formData.get('type') as string;
+    
+    const newExpense = {
+      id: Date.now(),
+      description: formData.get('description') as string,
+      amount,
+      type,
+      date: new Date().toISOString().split('T')[0],
+      receipt: receiptUrl
+    };
+
+    props.setProjects(props.projects.map(p => {
+      if (p.id === projectId) {
+        return {
+          ...p,
+          stages: p.stages.map(s => {
+            if (s.id === stageId) {
+              const updatedExpenses = [...s.expenses, newExpense];
+              const materials = updatedExpenses.filter(e => e.type === 'materials').reduce((sum, e) => sum + e.amount, 0);
+              const labor = updatedExpenses.filter(e => e.type === 'labor').reduce((sum, e) => sum + e.amount, 0);
+              const other = updatedExpenses.filter(e => e.type === 'other').reduce((sum, e) => sum + e.amount, 0);
+              return { ...s, expenses: updatedExpenses, materials, labor, other, spent: materials + labor + other };
+            }
+            return s;
+          })
+        };
+      }
+      return p;
+    }));
+
+    props.setIsStageExpenseDialogOpen(false);
+    props.setSelectedStageForTransaction(null);
+    toast({ title: 'Расход добавлен', description: `Расход ${amount.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ₽ добавлен в этап` });
+  };
+
+  const handleAddStageIncome = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const projectId = props.viewingProject;
+    const stageId = props.selectedStageForTransaction;
+    const files = (e.currentTarget.elements.namedItem('receipt') as HTMLInputElement).files;
+    const receiptUrl = files && files.length > 0 ? URL.createObjectURL(files[0]) : null;
+    const amount = Number(formData.get('amount'));
+    
+    const newIncome = {
+      id: Date.now(),
+      description: formData.get('description') as string,
+      amount,
+      date: new Date().toISOString().split('T')[0],
+      receipt: receiptUrl
+    };
+
+    props.setProjects(props.projects.map(p => {
+      if (p.id === projectId) {
+        return {
+          ...p,
+          stages: p.stages.map(s => {
+            if (s.id === stageId) {
+              const updatedIncomes = [...(s.incomes || []), newIncome];
+              const totalIncome = updatedIncomes.reduce((sum, inc) => sum + inc.amount, 0);
+              return { ...s, incomes: updatedIncomes, income: totalIncome };
+            }
+            return s;
+          })
+        };
+      }
+      return p;
+    }));
+
+    props.setIsStageIncomeDialogOpen(false);
+    props.setSelectedStageForTransaction(null);
+    toast({ title: 'Приход добавлен', description: `Приход ${amount.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ₽ добавлен в этап` });
+  };
+
   return {
     handleArchiveProject,
     handleUnarchiveProject,
@@ -366,6 +458,8 @@ export const useAppHandlers = (props: UseAppHandlersProps) => {
     handleAddPayment,
     handleAddProjectExpense,
     handleAddProjectIncome,
+    handleAddStageExpense,
+    handleAddStageIncome,
     getAllExpenses,
     getFilteredExpenses
   };

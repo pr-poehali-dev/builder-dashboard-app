@@ -105,6 +105,10 @@ export const FinancesView = (props: FinancesViewProps) => {
                   <Label htmlFor="stageName">Название этапа</Label>
                   <Input id="stageName" name="stageName" placeholder="Фундамент" required />
                 </div>
+                <div>
+                  <Label htmlFor="budget">Бюджет этапа (₽)</Label>
+                  <Input id="budget" name="budget" type="number" step="0.01" placeholder="500000.00" />
+                </div>
                 <Button type="submit" className="w-full">Добавить этап</Button>
               </form>
             </DialogContent>

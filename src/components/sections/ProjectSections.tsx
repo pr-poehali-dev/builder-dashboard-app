@@ -3,6 +3,7 @@ import { ProjectsList } from './projects/ProjectsList';
 import { ExpensesView } from './projects/ExpensesView';
 import { FinancesView } from './projects/FinancesView';
 import { ProjectDetail } from './projects/ProjectDetail';
+import { ProjectDetailNew } from './projects/ProjectDetailNew';
 
 interface ProjectSectionsProps {
   projects: any[];
@@ -25,6 +26,9 @@ interface ProjectSectionsProps {
   isProjectExpenseDialogOpen: boolean;
   isProjectIncomeDialogOpen: boolean;
   selectedProjectForTransaction: number | null;
+  isStageExpenseDialogOpen: boolean;
+  isStageIncomeDialogOpen: boolean;
+  selectedStageForTransaction: number | null;
   selectedStage: number | null;
   viewingProject: number | null;
   selectedProject: number | null;
@@ -46,6 +50,9 @@ interface ProjectSectionsProps {
   setIsProjectExpenseDialogOpen: (open: boolean) => void;
   setIsProjectIncomeDialogOpen: (open: boolean) => void;
   setSelectedProjectForTransaction: (id: number | null) => void;
+  setIsStageExpenseDialogOpen: (open: boolean) => void;
+  setIsStageIncomeDialogOpen: (open: boolean) => void;
+  setSelectedStageForTransaction: (id: number | null) => void;
   setSelectedStage: (id: number | null) => void;
   setSelectedProject: (id: number | null) => void;
   handleAddProject: (e: React.FormEvent<HTMLFormElement>) => void;
@@ -57,6 +64,8 @@ interface ProjectSectionsProps {
   handleAddPayment: (e: React.FormEvent<HTMLFormElement>) => void;
   handleAddProjectExpense: (e: React.FormEvent<HTMLFormElement>) => void;
   handleAddProjectIncome: (e: React.FormEvent<HTMLFormElement>) => void;
+  handleAddStageExpense: (e: React.FormEvent<HTMLFormElement>) => void;
+  handleAddStageIncome: (e: React.FormEvent<HTMLFormElement>) => void;
   handleArchiveProject: (id: number) => void;
   handleUnarchiveProject: (id: number) => void;
   getAllExpenses: () => any[];
@@ -136,16 +145,20 @@ export const renderFinances = (props: ProjectSectionsProps) => {
 };
 
 export const renderProjectDetail = (props: ProjectSectionsProps) => {
-  return <ProjectDetail 
+  return <ProjectDetailNew 
     projects={props.projects}
     viewingProject={props.viewingProject}
-    isCommentDialogOpen={props.isCommentDialogOpen}
-    setIsCommentDialogOpen={props.setIsCommentDialogOpen}
-    isExpenseDialogOpen={props.isExpenseDialogOpen}
-    setIsExpenseDialogOpen={props.setIsExpenseDialogOpen}
+    isStageDialogOpen={props.isStageDialogOpen}
+    setIsStageDialogOpen={props.setIsStageDialogOpen}
+    isStageExpenseDialogOpen={props.isStageExpenseDialogOpen}
+    setIsStageExpenseDialogOpen={props.setIsStageExpenseDialogOpen}
+    isStageIncomeDialogOpen={props.isStageIncomeDialogOpen}
+    setIsStageIncomeDialogOpen={props.setIsStageIncomeDialogOpen}
+    selectedStageForTransaction={props.selectedStageForTransaction}
+    setSelectedStageForTransaction={props.setSelectedStageForTransaction}
     setActiveSection={props.setActiveSection}
-    handleAddComment={props.handleAddComment}
-    handleAddExpense={props.handleAddExpense}
-    setSelectedStage={props.setSelectedStage}
+    handleAddStage={props.handleAddStage}
+    handleAddStageExpense={props.handleAddStageExpense}
+    handleAddStageIncome={props.handleAddStageIncome}
   />;
 };
