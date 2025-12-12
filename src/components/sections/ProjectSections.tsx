@@ -6,6 +6,7 @@ import { ProjectDetail } from './projects/ProjectDetail';
 
 interface ProjectSectionsProps {
   projects: any[];
+  companyExpenses: any[];
   totalBudget: number;
   totalSpent: number;
   totalIncome: number;
@@ -17,6 +18,7 @@ interface ProjectSectionsProps {
   isStageDialogOpen: boolean;
   isExpenseDialogOpen: boolean;
   isCommentDialogOpen: boolean;
+  isCompanyExpenseDialogOpen: boolean;
   selectedStage: number | null;
   viewingProject: number | null;
   selectedProject: number | null;
@@ -30,12 +32,14 @@ interface ProjectSectionsProps {
   setIsStageDialogOpen: (open: boolean) => void;
   setIsExpenseDialogOpen: (open: boolean) => void;
   setIsCommentDialogOpen: (open: boolean) => void;
+  setIsCompanyExpenseDialogOpen: (open: boolean) => void;
   setSelectedStage: (id: number | null) => void;
   setSelectedProject: (id: number | null) => void;
   handleAddProject: (e: React.FormEvent<HTMLFormElement>) => void;
   handleAddStage: (e: React.FormEvent<HTMLFormElement>) => void;
   handleAddExpense: (e: React.FormEvent<HTMLFormElement>) => void;
   handleAddComment: (e: React.FormEvent<HTMLFormElement>) => void;
+  handleAddCompanyExpense: (e: React.FormEvent<HTMLFormElement>) => void;
   handleArchiveProject: (id: number) => void;
   handleUnarchiveProject: (id: number) => void;
   getAllExpenses: () => any[];
@@ -85,11 +89,15 @@ export const renderExpenses = (props: ProjectSectionsProps) => {
 export const renderFinances = (props: ProjectSectionsProps) => {
   return <FinancesView 
     projects={props.projects}
+    companyExpenses={props.companyExpenses}
     selectedProject={props.selectedProject}
     setSelectedProject={props.setSelectedProject}
     isStageDialogOpen={props.isStageDialogOpen}
     setIsStageDialogOpen={props.setIsStageDialogOpen}
+    isCompanyExpenseDialogOpen={props.isCompanyExpenseDialogOpen}
+    setIsCompanyExpenseDialogOpen={props.setIsCompanyExpenseDialogOpen}
     handleAddStage={props.handleAddStage}
+    handleAddCompanyExpense={props.handleAddCompanyExpense}
   />;
 };
 
