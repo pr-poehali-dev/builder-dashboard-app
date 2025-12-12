@@ -7,6 +7,7 @@ import { ProjectDetail } from './projects/ProjectDetail';
 interface ProjectSectionsProps {
   projects: any[];
   companyExpenses: any[];
+  expenseCategories: any[];
   totalBudget: number;
   totalSpent: number;
   totalIncome: number;
@@ -19,11 +20,15 @@ interface ProjectSectionsProps {
   isExpenseDialogOpen: boolean;
   isCommentDialogOpen: boolean;
   isCompanyExpenseDialogOpen: boolean;
+  isExpenseCategoryDialogOpen: boolean;
+  isPaymentDialogOpen: boolean;
   selectedStage: number | null;
   viewingProject: number | null;
   selectedProject: number | null;
+  viewingCategory: number | null;
   setActiveSection: (section: string) => void;
   setViewingProject: (id: number | null) => void;
+  setViewingCategory: (id: number | null) => void;
   setFilterProject: (value: string) => void;
   setFilterDate: (value: string) => void;
   setFilterMinAmount: (value: string) => void;
@@ -33,6 +38,8 @@ interface ProjectSectionsProps {
   setIsExpenseDialogOpen: (open: boolean) => void;
   setIsCommentDialogOpen: (open: boolean) => void;
   setIsCompanyExpenseDialogOpen: (open: boolean) => void;
+  setIsExpenseCategoryDialogOpen: (open: boolean) => void;
+  setIsPaymentDialogOpen: (open: boolean) => void;
   setSelectedStage: (id: number | null) => void;
   setSelectedProject: (id: number | null) => void;
   handleAddProject: (e: React.FormEvent<HTMLFormElement>) => void;
@@ -40,6 +47,8 @@ interface ProjectSectionsProps {
   handleAddExpense: (e: React.FormEvent<HTMLFormElement>) => void;
   handleAddComment: (e: React.FormEvent<HTMLFormElement>) => void;
   handleAddCompanyExpense: (e: React.FormEvent<HTMLFormElement>) => void;
+  handleAddExpenseCategory: (e: React.FormEvent<HTMLFormElement>) => void;
+  handleAddPayment: (e: React.FormEvent<HTMLFormElement>) => void;
   handleArchiveProject: (id: number) => void;
   handleUnarchiveProject: (id: number) => void;
   getAllExpenses: () => any[];
@@ -90,14 +99,23 @@ export const renderFinances = (props: ProjectSectionsProps) => {
   return <FinancesView 
     projects={props.projects}
     companyExpenses={props.companyExpenses}
+    expenseCategories={props.expenseCategories}
     selectedProject={props.selectedProject}
+    viewingCategory={props.viewingCategory}
     setSelectedProject={props.setSelectedProject}
+    setViewingCategory={props.setViewingCategory}
     isStageDialogOpen={props.isStageDialogOpen}
     setIsStageDialogOpen={props.setIsStageDialogOpen}
     isCompanyExpenseDialogOpen={props.isCompanyExpenseDialogOpen}
     setIsCompanyExpenseDialogOpen={props.setIsCompanyExpenseDialogOpen}
+    isExpenseCategoryDialogOpen={props.isExpenseCategoryDialogOpen}
+    setIsExpenseCategoryDialogOpen={props.setIsExpenseCategoryDialogOpen}
+    isPaymentDialogOpen={props.isPaymentDialogOpen}
+    setIsPaymentDialogOpen={props.setIsPaymentDialogOpen}
     handleAddStage={props.handleAddStage}
     handleAddCompanyExpense={props.handleAddCompanyExpense}
+    handleAddExpenseCategory={props.handleAddExpenseCategory}
+    handleAddPayment={props.handleAddPayment}
   />;
 };
 

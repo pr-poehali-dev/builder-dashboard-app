@@ -97,9 +97,55 @@ export const mockTasks = [
   { id: 3, title: 'Провести проводку', project: 'ЖК Новый Горизонт', assignee: 'Михаил Сидоров', status: 'В работе' },
 ];
 
+export const mockExpenseCategories = [
+  { 
+    id: 1, 
+    name: 'Аренда офиса', 
+    type: 'recurring',
+    amount: 50000,
+    description: 'Ежемесячная аренда офиса',
+    payments: [
+      { id: 1, amount: 50000, date: '2024-11-01', receipt: null },
+      { id: 2, amount: 50000, date: '2024-12-01', receipt: null }
+    ]
+  },
+  { 
+    id: 2, 
+    name: 'Зарплата персонала', 
+    type: 'recurring',
+    amount: 250000,
+    description: 'Зарплата сотрудников офиса',
+    payments: [
+      { id: 3, amount: 250000, date: '2024-11-25', receipt: null },
+      { id: 4, amount: 250000, date: '2024-12-25', receipt: null }
+    ]
+  },
+  { 
+    id: 3, 
+    name: 'Топливо', 
+    type: 'one-time',
+    amount: 0,
+    description: 'Разовые расходы на топливо',
+    payments: [
+      { id: 5, amount: 35000, date: '2024-12-05', receipt: null },
+      { id: 6, amount: 42000, date: '2024-12-15', receipt: null }
+    ]
+  },
+  { 
+    id: 4, 
+    name: 'Налоги', 
+    type: 'recurring',
+    amount: 120000,
+    description: 'Квартальные налоги',
+    payments: [
+      { id: 7, amount: 120000, date: '2024-10-10', receipt: null },
+    ]
+  }
+];
+
 export const mockCompanyExpenses = [
-  { id: 1, description: 'Аренда офиса', amount: 50000, category: 'rent', date: '2024-12-01', receipt: null },
-  { id: 2, description: 'Зарплата персонала', amount: 250000, category: 'salary', date: '2024-12-01', receipt: null },
-  { id: 3, description: 'Топливо для техники', amount: 35000, category: 'fuel', date: '2024-12-05', receipt: null },
-  { id: 4, description: 'Налоги', amount: 120000, category: 'taxes', date: '2024-12-10', receipt: null },
+  { id: 1, description: 'Аренда офиса', amount: 50000, category: 'rent', date: '2024-12-01', receipt: null, categoryId: 1 },
+  { id: 2, description: 'Зарплата персонала', amount: 250000, category: 'salary', date: '2024-12-01', receipt: null, categoryId: 2 },
+  { id: 3, description: 'Топливо для техники', amount: 35000, category: 'fuel', date: '2024-12-05', receipt: null, categoryId: 3 },
+  { id: 4, description: 'Налоги', amount: 120000, category: 'taxes', date: '2024-12-10', receipt: null, categoryId: 4 },
 ];

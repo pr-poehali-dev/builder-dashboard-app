@@ -2,7 +2,7 @@ import { useState } from 'react';
 import Icon from '@/components/ui/icon';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { mockProjects, mockEmployees, mockTasks, mockCompanyExpenses } from '@/data/mockData';
+import { mockProjects, mockEmployees, mockTasks, mockCompanyExpenses, mockExpenseCategories } from '@/data/mockData';
 import { renderDashboard, renderProjects, renderExpenses, renderFinances, renderProjectDetail } from '@/components/sections/ProjectSections';
 import { renderEmployees, renderTasks, renderProfile } from '@/components/sections/TeamSections';
 
@@ -14,6 +14,7 @@ const Index = () => {
   const [employees, setEmployees] = useState(mockEmployees);
   const [tasks, setTasks] = useState(mockTasks);
   const [companyExpenses, setCompanyExpenses] = useState(mockCompanyExpenses);
+  const [expenseCategories, setExpenseCategories] = useState(mockExpenseCategories);
   const [isProjectDialogOpen, setIsProjectDialogOpen] = useState(false);
   const [isStageDialogOpen, setIsStageDialogOpen] = useState(false);
   const [isEmployeeDialogOpen, setIsEmployeeDialogOpen] = useState(false);
@@ -21,6 +22,9 @@ const Index = () => {
   const [isExpenseDialogOpen, setIsExpenseDialogOpen] = useState(false);
   const [isCommentDialogOpen, setIsCommentDialogOpen] = useState(false);
   const [isCompanyExpenseDialogOpen, setIsCompanyExpenseDialogOpen] = useState(false);
+  const [isExpenseCategoryDialogOpen, setIsExpenseCategoryDialogOpen] = useState(false);
+  const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
+  const [viewingCategory, setViewingCategory] = useState<number | null>(null);
   const [selectedStage, setSelectedStage] = useState<number | null>(null);
   const [filterProject, setFilterProject] = useState<string>('all');
   const [filterDate, setFilterDate] = useState<string>('');
@@ -211,6 +215,46 @@ const Index = () => {
     toast({ title: 'Расход компании добавлен', description: `Расход на ${newExpense.amount.toLocaleString()} ₽ добавлен` });
   };
 
+  const handleAddExpenseCategory = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    
+    const newCategory = {
+      id: Date.now(),
+      name: formData.get('name') as string,
+      type: formData.get('type') as string,
+      amount: Number(formData.get('amount')) || 0,
+      description: formData.get('description') as string,
+      payments: []
+    };
+
+    setExpenseCategories([...expenseCategories, newCategory]);
+    setIsExpenseCategoryDialogOpen(false);
+    toast({ title: 'Статья расходов создана', description: `"${newCategory.name}" успешно добавлена` });
+  };
+
+  const handleAddPayment = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const files = (e.currentTarget.elements.namedItem('receipt') as HTMLInputElement).files;
+    const receiptUrl = files && files.length > 0 ? URL.createObjectURL(files[0]) : null;
+    const categoryId = viewingCategory;
+    
+    const newPayment = {
+      id: Date.now(),
+      amount: Number(formData.get('amount')),
+      date: formData.get('date') as string || new Date().toISOString().split('T')[0],
+      receipt: receiptUrl
+    };
+
+    setExpenseCategories(expenseCategories.map(cat => 
+      cat.id === categoryId ? { ...cat, payments: [...cat.payments, newPayment] } : cat
+    ));
+
+    setIsPaymentDialogOpen(false);
+    toast({ title: 'Платёж добавлен', description: `Платёж на ${newPayment.amount.toLocaleString()} ₽ добавлен` });
+  };
+
   const getAllExpenses = () => {
     const allExpenses: Array<{
       id: number;
@@ -268,6 +312,7 @@ const Index = () => {
     employees,
     tasks,
     companyExpenses,
+    expenseCategories,
     totalBudget,
     totalSpent,
     totalIncome,
@@ -282,12 +327,16 @@ const Index = () => {
     isExpenseDialogOpen,
     isCommentDialogOpen,
     isCompanyExpenseDialogOpen,
+    isExpenseCategoryDialogOpen,
+    isPaymentDialogOpen,
     selectedStage,
     viewingProject,
     selectedProject,
+    viewingCategory,
     showArchivedEmployees,
     setActiveSection,
     setViewingProject,
+    setViewingCategory,
     setFilterProject,
     setFilterDate,
     setFilterMinAmount,
@@ -299,6 +348,8 @@ const Index = () => {
     setIsExpenseDialogOpen,
     setIsCommentDialogOpen,
     setIsCompanyExpenseDialogOpen,
+    setIsExpenseCategoryDialogOpen,
+    setIsPaymentDialogOpen,
     setSelectedStage,
     setSelectedProject,
     setShowArchivedEmployees,
@@ -309,6 +360,8 @@ const Index = () => {
     handleAddExpense,
     handleAddComment,
     handleAddCompanyExpense,
+    handleAddExpenseCategory,
+    handleAddPayment,
     handleArchiveProject,
     handleUnarchiveProject,
     handleArchiveEmployee,
