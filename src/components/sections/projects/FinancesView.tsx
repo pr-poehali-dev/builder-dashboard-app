@@ -9,6 +9,7 @@ import { ProjectStageExpenses } from './finances/ProjectStageExpenses';
 import { ExpenseDistribution } from './finances/ExpenseDistribution';
 import { CompanyExpensesCard } from './finances/CompanyExpensesCard';
 import { ExpenseCategoriesCard } from './finances/ExpenseCategoriesCard';
+import { CompanyFinancesCard } from './finances/CompanyFinancesCard';
 
 interface FinancesViewProps {
   projects: any[];
@@ -110,6 +111,11 @@ export const FinancesView = (props: FinancesViewProps) => {
           </Dialog>
         </div>
       </div>
+
+      <CompanyFinancesCard 
+        companyExpenses={companyExpenses}
+        expenseCategories={expenseCategories}
+      />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <ProjectStageExpenses project={project} />
