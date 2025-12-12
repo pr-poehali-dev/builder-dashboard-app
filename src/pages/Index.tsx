@@ -672,8 +672,7 @@ const Index = () => {
                         {(stage.spent / 1000).toFixed(0)} тыс ₽
                       </span>
                     </div>
-                    <Progress value={stage.progress} className="h-2" />
-                    <div className="flex gap-4 text-xs text-muted-foreground">
+                    <div className="flex gap-4 text-xs text-muted-foreground mt-2">
                       <span>Материалы: {(stage.materials / 1000).toFixed(0)} тыс</span>
                       <span>Работы: {(stage.labor / 1000).toFixed(0)} тыс</span>
                     </div>
