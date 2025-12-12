@@ -65,6 +65,34 @@ export const ProjectsList = (props: ProjectsListProps) => {
         </DialogContent>
       </Dialog>
     </div>
+    {displayedProjects.length === 0 && (
+      <Card className="bg-gradient-to-br from-primary/5 to-secondary/5 border-2 border-dashed">
+        <CardContent className="pt-6">
+          <div className="text-center space-y-4 py-12">
+            <div className="flex justify-center">
+              <div className="h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center">
+                <Icon name="Building2" size={40} className="text-primary" />
+              </div>
+            </div>
+            <div>
+              <h3 className="text-xl font-bold mb-2">{showArchived ? 'Архив пуст' : 'Нет объектов'}</h3>
+              <p className="text-muted-foreground">
+                {showArchived 
+                  ? 'Архивированные объекты будут отображаться здесь' 
+                  : 'Создайте первый строительный объект, чтобы начать работу'}
+              </p>
+            </div>
+            {!showArchived && (
+              <Button onClick={() => setIsProjectDialogOpen(true)} size="lg">
+                <Icon name="Plus" size={18} className="mr-2" />
+                Создать первый объект
+              </Button>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    )}
+    
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {displayedProjects.map(project => (
         <Card 

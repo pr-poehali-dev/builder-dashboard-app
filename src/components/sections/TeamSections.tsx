@@ -83,6 +83,34 @@ export const renderEmployees = (props: TeamSectionsProps) => {
       </Dialog>
     </div>
 
+    {displayedEmployees.length === 0 && (
+      <Card className="bg-gradient-to-br from-primary/5 to-secondary/5 border-2 border-dashed">
+        <CardContent className="pt-6">
+          <div className="text-center space-y-4 py-12">
+            <div className="flex justify-center">
+              <div className="h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center">
+                <Icon name="Users" size={40} className="text-primary" />
+              </div>
+            </div>
+            <div>
+              <h3 className="text-xl font-bold mb-2">{showArchivedEmployees ? 'Архив пуст' : 'Нет сотрудников'}</h3>
+              <p className="text-muted-foreground">
+                {showArchivedEmployees 
+                  ? 'Архивированные сотрудники будут отображаться здесь' 
+                  : 'Добавьте сотрудников вашей команды с контактами'}
+              </p>
+            </div>
+            {!showArchivedEmployees && (
+              <Button onClick={() => setIsEmployeeDialogOpen(true)} size="lg">
+                <Icon name="UserPlus" size={18} className="mr-2" />
+                Добавить первого сотрудника
+              </Button>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    )}
+    
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       {displayedEmployees.map(employee => (
         <Card key={employee.id}>
