@@ -19,6 +19,7 @@ const mockProjects = [
     budget: 5000000,
     spent: 3250000,
     income: 4000000,
+    archived: false,
     comments: [
       { id: 1, text: 'Начали работу на объекте', date: '2024-12-01', author: 'Иван Петров' }
     ],
@@ -66,6 +67,7 @@ const mockProjects = [
     budget: 3000000,
     spent: 1350000,
     income: 1800000,
+    archived: false,
     comments: [],
     stages: [
       { 
@@ -97,9 +99,9 @@ const mockProjects = [
 ];
 
 const mockEmployees = [
-  { id: 1, name: 'Иван Петров', role: 'Прораб', tasks: 3 },
-  { id: 2, name: 'Сергей Иванов', role: 'Каменщик', tasks: 2 },
-  { id: 3, name: 'Михаил Сидоров', role: 'Электрик', tasks: 4 },
+  { id: 1, name: 'Иван Петров', role: 'Прораб', tasks: 3, archived: false },
+  { id: 2, name: 'Сергей Иванов', role: 'Каменщик', tasks: 2, archived: false },
+  { id: 3, name: 'Михаил Сидоров', role: 'Электрик', tasks: 4, archived: false },
 ];
 
 const mockTasks = [
@@ -128,9 +130,37 @@ const Index = () => {
   const [filterMaxAmount, setFilterMaxAmount] = useState<string>('');
   const { toast } = useToast();
 
-  const totalBudget = projects.reduce((acc, p) => acc + p.budget, 0);
-  const totalSpent = projects.reduce((acc, p) => acc + p.spent, 0);
-  const totalIncome = projects.reduce((acc, p) => acc + p.income, 0);
+  const totalBudget = projects.filter(p => !p.archived).reduce((acc, p) => acc + p.budget, 0);
+  const totalSpent = projects.filter(p => !p.archived).reduce((acc, p) => acc + p.spent, 0);
+  const totalIncome = projects.filter(p => !p.archived).reduce((acc, p) => acc + p.income, 0);
+
+  const handleArchiveProject = (projectId: number) => {
+    setProjects(projects.map(p => 
+      p.id === projectId ? { ...p, archived: true } : p
+    ));
+    toast({ title: 'Объект архивирован', description: 'Объект перемещён в архив' });
+  };
+
+  const handleUnarchiveProject = (projectId: number) => {
+    setProjects(projects.map(p => 
+      p.id === projectId ? { ...p, archived: false } : p
+    ));
+    toast({ title: 'Объект восстановлен', description: 'Объект возвращён из архива' });
+  };
+
+  const handleArchiveEmployee = (employeeId: number) => {
+    setEmployees(employees.map(e => 
+      e.id === employeeId ? { ...e, archived: true } : e
+    ));
+    toast({ title: 'Сотрудник архивирован', description: 'Сотрудник перемещён в архив' });
+  };
+
+  const handleUnarchiveEmployee = (employeeId: number) => {
+    setEmployees(employees.map(e => 
+      e.id === employeeId ? { ...e, archived: false } : e
+    ));
+    toast({ title: 'Сотрудник восстановлен', description: 'Сотрудник возвращён из архива' });
+  };
 
   const handleAddProject = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -142,6 +172,7 @@ const Index = () => {
       budget: Number(formData.get('budget')),
       spent: 0,
       income: 0,
+      archived: false,
       comments: [],
       stages: []
     };
@@ -176,7 +207,8 @@ const Index = () => {
       id: employees.length + 1,
       name: formData.get('name') as string,
       role: formData.get('role') as string,
-      tasks: 0
+      tasks: 0,
+      archived: false
     };
     setEmployees([...employees, newEmployee]);
     setIsEmployeeDialogOpen(false);
@@ -309,7 +341,7 @@ const Index = () => {
   };
 
   const renderDashboard = () => {
-    const activeProjects = projects.filter(p => p.spent < p.budget);
+    const activeProjects = projects.filter(p => !p.archived && p.spent < p.budget);
     const recentExpenses = getAllExpenses().slice(0, 5);
 
     return (
@@ -420,10 +452,24 @@ const Index = () => {
     );
   };
 
-  const renderProjects = () => (
+  const renderProjects = () => {
+    const [showArchived, setShowArchived] = useState(false);
+    const displayedProjects = showArchived ? projects.filter(p => p.archived) : projects.filter(p => !p.archived);
+
+    return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">Объекты</h2>
+        <div className="flex items-center gap-4">
+          <h2 className="text-2xl font-bold">Объекты</h2>
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => setShowArchived(!showArchived)}
+          >
+            <Icon name="Archive" size={16} className="mr-2" />
+            {showArchived ? 'Активные' : 'Архив'}
+          </Button>
+        </div>
         <Dialog open={isProjectDialogOpen} onOpenChange={setIsProjectDialogOpen}>
           <DialogTrigger asChild>
             <Button>
@@ -454,7 +500,7 @@ const Index = () => {
         </Dialog>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {projects.map(project => (
+        {displayedProjects.map(project => (
           <Card 
             key={project.id} 
             className="hover:shadow-lg transition-shadow cursor-pointer"
@@ -464,11 +510,29 @@ const Index = () => {
             }}
           >
             <CardHeader>
-              <CardTitle>{project.name}</CardTitle>
-              <p className="text-sm text-muted-foreground flex items-center gap-2">
-                <Icon name="MapPin" size={14} />
-                {project.address}
-              </p>
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <CardTitle>{project.name}</CardTitle>
+                  <p className="text-sm text-muted-foreground flex items-center gap-2">
+                    <Icon name="MapPin" size={14} />
+                    {project.address}
+                  </p>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (project.archived) {
+                      handleUnarchiveProject(project.id);
+                    } else {
+                      handleArchiveProject(project.id);
+                    }
+                  }}
+                >
+                  <Icon name={project.archived ? "ArchiveRestore" : "Archive"} size={16} />
+                </Button>
+              </div>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-3 gap-2 text-sm">
@@ -490,7 +554,8 @@ const Index = () => {
         ))}
       </div>
     </div>
-  );
+    );
+  };
 
   const renderExpenses = () => {
     const filteredExpenses = getFilteredExpenses();
@@ -758,10 +823,24 @@ const Index = () => {
     );
   };
 
-  const renderEmployees = () => (
+  const renderEmployees = () => {
+    const [showArchived, setShowArchived] = useState(false);
+    const displayedEmployees = showArchived ? employees.filter(e => e.archived) : employees.filter(e => !e.archived);
+
+    return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">Сотрудники</h2>
+        <div className="flex items-center gap-4">
+          <h2 className="text-2xl font-bold">Сотрудники</h2>
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => setShowArchived(!showArchived)}
+          >
+            <Icon name="Archive" size={16} className="mr-2" />
+            {showArchived ? 'Активные' : 'Архив'}
+          </Button>
+        </div>
         <Dialog open={isEmployeeDialogOpen} onOpenChange={setIsEmployeeDialogOpen}>
           <DialogTrigger asChild>
             <Button>
@@ -789,10 +868,24 @@ const Index = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {employees.map(employee => (
+        {displayedEmployees.map(employee => (
           <Card key={employee.id}>
             <CardContent className="pt-6">
-              <div className="flex flex-col items-center text-center space-y-4">
+              <div className="flex flex-col items-center text-center space-y-4 relative">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="absolute top-0 right-0"
+                  onClick={() => {
+                    if (employee.archived) {
+                      handleUnarchiveEmployee(employee.id);
+                    } else {
+                      handleArchiveEmployee(employee.id);
+                    }
+                  }}
+                >
+                  <Icon name={employee.archived ? "ArchiveRestore" : "Archive"} size={16} />
+                </Button>
                 <Avatar className="h-20 w-20">
                   <AvatarFallback className="text-2xl bg-primary text-white">
                     {employee.name.split(' ').map(n => n[0]).join('')}
@@ -811,7 +904,8 @@ const Index = () => {
         ))}
       </div>
     </div>
-  );
+    );
+  };
 
   const renderTasks = () => (
     <div className="space-y-6">
