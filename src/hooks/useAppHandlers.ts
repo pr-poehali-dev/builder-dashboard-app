@@ -23,6 +23,10 @@ interface UseAppHandlersProps {
   setIsCompanyExpenseDialogOpen: (open: boolean) => void;
   setIsExpenseCategoryDialogOpen: (open: boolean) => void;
   setIsPaymentDialogOpen: (open: boolean) => void;
+  setIsProjectExpenseDialogOpen: (open: boolean) => void;
+  setIsProjectIncomeDialogOpen: (open: boolean) => void;
+  selectedProjectForTransaction: number | null;
+  setSelectedProjectForTransaction: (id: number | null) => void;
   filterProject: string;
   filterDate: string;
   filterMinAmount: string;
@@ -302,6 +306,42 @@ export const useAppHandlers = (props: UseAppHandlersProps) => {
     return expenses;
   };
 
+  const handleAddProjectExpense = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const projectId = props.selectedProjectForTransaction;
+    const amount = Number(formData.get('amount'));
+    
+    props.setProjects(props.projects.map(p => {
+      if (p.id === projectId) {
+        return { ...p, spent: p.spent + amount };
+      }
+      return p;
+    }));
+    
+    props.setIsProjectExpenseDialogOpen(false);
+    props.setSelectedProjectForTransaction(null);
+    toast({ title: 'Расход добавлен', description: `Расход ${amount.toLocaleString()} ₽ добавлен в проект` });
+  };
+
+  const handleAddProjectIncome = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const projectId = props.selectedProjectForTransaction;
+    const amount = Number(formData.get('amount'));
+    
+    props.setProjects(props.projects.map(p => {
+      if (p.id === projectId) {
+        return { ...p, income: p.income + amount };
+      }
+      return p;
+    }));
+    
+    props.setIsProjectIncomeDialogOpen(false);
+    props.setSelectedProjectForTransaction(null);
+    toast({ title: 'Приход добавлен', description: `Приход ${amount.toLocaleString()} ₽ добавлен в проект` });
+  };
+
   return {
     handleArchiveProject,
     handleUnarchiveProject,
@@ -316,6 +356,8 @@ export const useAppHandlers = (props: UseAppHandlersProps) => {
     handleAddCompanyExpense,
     handleAddExpenseCategory,
     handleAddPayment,
+    handleAddProjectExpense,
+    handleAddProjectIncome,
     getAllExpenses,
     getFilteredExpenses
   };

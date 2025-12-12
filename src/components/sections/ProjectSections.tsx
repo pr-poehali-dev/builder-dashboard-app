@@ -22,6 +22,9 @@ interface ProjectSectionsProps {
   isCompanyExpenseDialogOpen: boolean;
   isExpenseCategoryDialogOpen: boolean;
   isPaymentDialogOpen: boolean;
+  isProjectExpenseDialogOpen: boolean;
+  isProjectIncomeDialogOpen: boolean;
+  selectedProjectForTransaction: number | null;
   selectedStage: number | null;
   viewingProject: number | null;
   selectedProject: number | null;
@@ -40,6 +43,9 @@ interface ProjectSectionsProps {
   setIsCompanyExpenseDialogOpen: (open: boolean) => void;
   setIsExpenseCategoryDialogOpen: (open: boolean) => void;
   setIsPaymentDialogOpen: (open: boolean) => void;
+  setIsProjectExpenseDialogOpen: (open: boolean) => void;
+  setIsProjectIncomeDialogOpen: (open: boolean) => void;
+  setSelectedProjectForTransaction: (id: number | null) => void;
   setSelectedStage: (id: number | null) => void;
   setSelectedProject: (id: number | null) => void;
   handleAddProject: (e: React.FormEvent<HTMLFormElement>) => void;
@@ -49,6 +55,8 @@ interface ProjectSectionsProps {
   handleAddCompanyExpense: (e: React.FormEvent<HTMLFormElement>) => void;
   handleAddExpenseCategory: (e: React.FormEvent<HTMLFormElement>) => void;
   handleAddPayment: (e: React.FormEvent<HTMLFormElement>) => void;
+  handleAddProjectExpense: (e: React.FormEvent<HTMLFormElement>) => void;
+  handleAddProjectIncome: (e: React.FormEvent<HTMLFormElement>) => void;
   handleArchiveProject: (id: number) => void;
   handleUnarchiveProject: (id: number) => void;
   getAllExpenses: () => any[];
@@ -77,6 +85,14 @@ export const renderProjects = (props: ProjectSectionsProps) => {
     setActiveSection={props.setActiveSection}
     handleArchiveProject={props.handleArchiveProject}
     handleUnarchiveProject={props.handleUnarchiveProject}
+    isProjectExpenseDialogOpen={props.isProjectExpenseDialogOpen}
+    setIsProjectExpenseDialogOpen={props.setIsProjectExpenseDialogOpen}
+    isProjectIncomeDialogOpen={props.isProjectIncomeDialogOpen}
+    setIsProjectIncomeDialogOpen={props.setIsProjectIncomeDialogOpen}
+    selectedProjectForTransaction={props.selectedProjectForTransaction}
+    setSelectedProjectForTransaction={props.setSelectedProjectForTransaction}
+    handleAddProjectExpense={props.handleAddProjectExpense}
+    handleAddProjectIncome={props.handleAddProjectIncome}
   />;
 };
 

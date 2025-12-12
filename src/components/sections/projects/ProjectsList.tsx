@@ -15,14 +15,61 @@ interface ProjectsListProps {
   setActiveSection: (section: string) => void;
   handleArchiveProject: (id: number) => void;
   handleUnarchiveProject: (id: number) => void;
+  isProjectExpenseDialogOpen?: boolean;
+  setIsProjectExpenseDialogOpen?: (open: boolean) => void;
+  isProjectIncomeDialogOpen?: boolean;
+  setIsProjectIncomeDialogOpen?: (open: boolean) => void;
+  selectedProjectForTransaction?: number | null;
+  setSelectedProjectForTransaction?: (id: number | null) => void;
+  handleAddProjectExpense?: (e: React.FormEvent<HTMLFormElement>) => void;
+  handleAddProjectIncome?: (e: React.FormEvent<HTMLFormElement>) => void;
 }
 
 export const ProjectsList = (props: ProjectsListProps) => {
-  const { projects, isProjectDialogOpen, setIsProjectDialogOpen, handleAddProject, setViewingProject, setActiveSection, handleArchiveProject, handleUnarchiveProject } = props;
+  const { projects, isProjectDialogOpen, setIsProjectDialogOpen, handleAddProject, setViewingProject, setActiveSection, handleArchiveProject, handleUnarchiveProject, isProjectExpenseDialogOpen, setIsProjectExpenseDialogOpen, isProjectIncomeDialogOpen, setIsProjectIncomeDialogOpen, selectedProjectForTransaction, setSelectedProjectForTransaction, handleAddProjectExpense, handleAddProjectIncome } = props;
   const [showArchived, setShowArchived] = useState(false);
   const displayedProjects = showArchived ? projects.filter(p => p.archived) : projects.filter(p => !p.archived);
 
   return (
+  <>
+    <Dialog open={isProjectExpenseDialogOpen} onOpenChange={setIsProjectExpenseDialogOpen}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Добавить расход объекта</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleAddProjectExpense} className="space-y-4">
+          <div>
+            <Label htmlFor="expenseAmount">Сумма (₽)</Label>
+            <Input id="expenseAmount" name="amount" type="number" placeholder="100000" required />
+          </div>
+          <div>
+            <Label htmlFor="expenseDescription">Описание</Label>
+            <Input id="expenseDescription" name="description" placeholder="Закупка материалов" />
+          </div>
+          <Button type="submit" className="w-full">Добавить расход</Button>
+        </form>
+      </DialogContent>
+    </Dialog>
+
+    <Dialog open={isProjectIncomeDialogOpen} onOpenChange={setIsProjectIncomeDialogOpen}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Добавить приход средств</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleAddProjectIncome} className="space-y-4">
+          <div>
+            <Label htmlFor="incomeAmount">Сумма (₽)</Label>
+            <Input id="incomeAmount" name="amount" type="number" placeholder="500000" required />
+          </div>
+          <div>
+            <Label htmlFor="incomeDescription">Описание</Label>
+            <Input id="incomeDescription" name="description" placeholder="Оплата от заказчика" />
+          </div>
+          <Button type="submit" className="w-full">Добавить приход</Button>
+        </form>
+      </DialogContent>
+    </Dialog>
+
   <div className="space-y-6">
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-4">
@@ -143,10 +190,42 @@ export const ProjectsList = (props: ProjectsListProps) => {
                 <p className="font-semibold text-green-600">{(project.income / 1000000).toFixed(1)}м</p>
               </div>
             </div>
+            
+            {!project.archived && setIsProjectExpenseDialogOpen && setIsProjectIncomeDialogOpen && (
+              <div className="flex gap-2 pt-2">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="flex-1"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedProjectForTransaction?.(project.id);
+                    setIsProjectExpenseDialogOpen(true);
+                  }}
+                >
+                  <Icon name="Minus" size={14} className="mr-1" />
+                  Расход
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="flex-1"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedProjectForTransaction?.(project.id);
+                    setIsProjectIncomeDialogOpen(true);
+                  }}
+                >
+                  <Icon name="Plus" size={14} className="mr-1" />
+                  Приход
+                </Button>
+              </div>
+            )}
           </CardContent>
         </Card>
       ))}
     </div>
   </div>
+  </>
   );
 };
