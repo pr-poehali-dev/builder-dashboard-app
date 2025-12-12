@@ -61,6 +61,22 @@ export const renderEmployees = (props: TeamSectionsProps) => {
               <Label htmlFor="role">Должность</Label>
               <Input id="role" name="role" placeholder="Прораб" required />
             </div>
+            <div>
+              <Label htmlFor="phone">Телефон</Label>
+              <Input id="phone" name="phone" type="tel" placeholder="+7 (999) 123-45-67" />
+            </div>
+            <div>
+              <Label htmlFor="telegram">Telegram</Label>
+              <Input id="telegram" name="telegram" placeholder="@username" />
+            </div>
+            <div>
+              <Label htmlFor="whatsapp">WhatsApp</Label>
+              <Input id="whatsapp" name="whatsapp" type="tel" placeholder="+79991234567" />
+            </div>
+            <div>
+              <Label htmlFor="max">MAX</Label>
+              <Input id="max" name="max" placeholder="@max_username" />
+            </div>
             <Button type="submit" className="w-full">Добавить сотрудника</Button>
           </form>
         </DialogContent>
@@ -98,6 +114,48 @@ export const renderEmployees = (props: TeamSectionsProps) => {
               <Badge variant="secondary">
                 {employee.tasks} {employee.tasks === 1 ? 'задача' : 'задачи'}
               </Badge>
+              
+              {(employee.phone || employee.telegram || employee.whatsapp || employee.max) && (
+                <div className="w-full space-y-2 pt-2 border-t">
+                  {employee.phone && (
+                    <a 
+                      href={`tel:${employee.phone}`}
+                      className="flex items-center gap-2 text-xs text-muted-foreground hover:text-primary transition-colors"
+                    >
+                      <Icon name="Phone" size={14} />
+                      <span>{employee.phone}</span>
+                    </a>
+                  )}
+                  {employee.telegram && (
+                    <a 
+                      href={`https://t.me/${employee.telegram.replace('@', '')}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 text-xs text-muted-foreground hover:text-primary transition-colors"
+                    >
+                      <Icon name="Send" size={14} />
+                      <span>{employee.telegram}</span>
+                    </a>
+                  )}
+                  {employee.whatsapp && (
+                    <a 
+                      href={`https://wa.me/${employee.whatsapp.replace(/[^0-9]/g, '')}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 text-xs text-muted-foreground hover:text-primary transition-colors"
+                    >
+                      <Icon name="MessageCircle" size={14} />
+                      <span>{employee.whatsapp}</span>
+                    </a>
+                  )}
+                  {employee.max && (
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <Icon name="AtSign" size={14} />
+                      <span>{employee.max}</span>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>

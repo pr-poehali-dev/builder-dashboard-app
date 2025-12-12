@@ -86,9 +86,9 @@ export const mockProjects = [
 ];
 
 export const mockEmployees = [
-  { id: 1, name: 'Иван Петров', role: 'Прораб', tasks: 3, archived: false },
-  { id: 2, name: 'Сергей Иванов', role: 'Каменщик', tasks: 2, archived: false },
-  { id: 3, name: 'Михаил Сидоров', role: 'Электрик', tasks: 4, archived: false },
+  { id: 1, name: 'Иван Петров', role: 'Прораб', tasks: 3, archived: false, phone: '+7 (999) 123-45-67', telegram: '@ivan_petrov', whatsapp: '+79991234567', max: '@ivan_max' },
+  { id: 2, name: 'Сергей Иванов', role: 'Каменщик', tasks: 2, archived: false, phone: '+7 (999) 765-43-21', telegram: '', whatsapp: '', max: '' },
+  { id: 3, name: 'Михаил Сидоров', role: 'Электрик', tasks: 4, archived: false, phone: '+7 (999) 555-12-34', telegram: '@m_sidorov', whatsapp: '+79995551234', max: '' },
 ];
 
 export const mockTasks = [

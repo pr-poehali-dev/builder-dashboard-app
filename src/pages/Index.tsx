@@ -104,6 +104,10 @@ const Index = () => {
       id: employees.length + 1,
       name: formData.get('name') as string,
       role: formData.get('role') as string,
+      phone: formData.get('phone') as string || '',
+      telegram: formData.get('telegram') as string || '',
+      whatsapp: formData.get('whatsapp') as string || '',
+      max: formData.get('max') as string || '',
       tasks: 0,
       archived: false
     };
