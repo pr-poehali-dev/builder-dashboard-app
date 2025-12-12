@@ -16,7 +16,23 @@ interface FinancesViewProps {
 
 export const FinancesView = (props: FinancesViewProps) => {
   const { projects, selectedProject, setSelectedProject, isStageDialogOpen, setIsStageDialogOpen, handleAddStage } = props;
-  const project = projects.find(p => p.id === selectedProject) || projects[0];
+  const activeProjects = projects.filter(p => !p.archived);
+  const project = activeProjects.find(p => p.id === selectedProject) || activeProjects[0];
+  
+  if (!project) {
+    return (
+      <div className="space-y-6">
+        <h2 className="text-2xl font-bold">Финансы</h2>
+        <Card>
+          <CardContent className="pt-6">
+            <p className="text-center text-muted-foreground py-8">
+              Нет активных объектов. Создайте объект, чтобы начать работу с финансами.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
   
   return (
     <div className="space-y-6">
@@ -25,10 +41,10 @@ export const FinancesView = (props: FinancesViewProps) => {
         <div className="flex gap-2">
           <select 
             className="border rounded-lg px-4 py-2"
-            value={selectedProject || projects[0].id}
+            value={selectedProject || project.id}
             onChange={(e) => setSelectedProject(Number(e.target.value))}
           >
-            {projects.map(p => (
+            {activeProjects.map(p => (
               <option key={p.id} value={p.id}>{p.name}</option>
             ))}
           </select>
@@ -47,7 +63,7 @@ export const FinancesView = (props: FinancesViewProps) => {
                 <div>
                   <Label htmlFor="projectId">Объект</Label>
                   <select id="projectId" name="projectId" className="w-full border rounded-lg px-3 py-2" required>
-                    {projects.map(p => (
+                    {activeProjects.map(p => (
                       <option key={p.id} value={p.id}>{p.name}</option>
                     ))}
                   </select>

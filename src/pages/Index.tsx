@@ -24,6 +24,7 @@ const Index = () => {
   const [filterDate, setFilterDate] = useState<string>('');
   const [filterMinAmount, setFilterMinAmount] = useState<string>('');
   const [filterMaxAmount, setFilterMaxAmount] = useState<string>('');
+  const [showArchivedEmployees, setShowArchivedEmployees] = useState(false);
   const { toast } = useToast();
 
   const totalBudget = projects.filter(p => !p.archived).reduce((acc, p) => acc + p.budget, 0);
@@ -256,6 +257,7 @@ const Index = () => {
     selectedStage,
     viewingProject,
     selectedProject,
+    showArchivedEmployees,
     setActiveSection,
     setViewingProject,
     setFilterProject,
@@ -270,6 +272,7 @@ const Index = () => {
     setIsCommentDialogOpen,
     setSelectedStage,
     setSelectedProject,
+    setShowArchivedEmployees,
     handleAddProject,
     handleAddStage,
     handleAddEmployee,

@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import Icon from '@/components/ui/icon';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -14,8 +13,10 @@ interface TeamSectionsProps {
   projects: any[];
   isEmployeeDialogOpen: boolean;
   isTaskDialogOpen: boolean;
+  showArchivedEmployees: boolean;
   setIsEmployeeDialogOpen: (open: boolean) => void;
   setIsTaskDialogOpen: (open: boolean) => void;
+  setShowArchivedEmployees: (value: boolean) => void;
   handleAddEmployee: (e: React.FormEvent<HTMLFormElement>) => void;
   handleAddTask: (e: React.FormEvent<HTMLFormElement>) => void;
   handleArchiveEmployee: (id: number) => void;
@@ -23,9 +24,8 @@ interface TeamSectionsProps {
 }
 
 export const renderEmployees = (props: TeamSectionsProps) => {
-  const { employees, isEmployeeDialogOpen, setIsEmployeeDialogOpen, handleAddEmployee, handleArchiveEmployee, handleUnarchiveEmployee } = props;
-  const [showArchived, setShowArchived] = useState(false);
-  const displayedEmployees = showArchived ? employees.filter(e => e.archived) : employees.filter(e => !e.archived);
+  const { employees, isEmployeeDialogOpen, setIsEmployeeDialogOpen, handleAddEmployee, handleArchiveEmployee, handleUnarchiveEmployee, showArchivedEmployees, setShowArchivedEmployees } = props;
+  const displayedEmployees = showArchivedEmployees ? employees.filter(e => e.archived) : employees.filter(e => !e.archived);
 
   return (
   <div className="space-y-6">
@@ -35,10 +35,10 @@ export const renderEmployees = (props: TeamSectionsProps) => {
         <Button 
           variant="outline" 
           size="sm"
-          onClick={() => setShowArchived(!showArchived)}
+          onClick={() => setShowArchivedEmployees(!showArchivedEmployees)}
         >
           <Icon name="Archive" size={16} className="mr-2" />
-          {showArchived ? 'Активные' : 'Архив'}
+          {showArchivedEmployees ? 'Активные' : 'Архив'}
         </Button>
       </div>
       <Dialog open={isEmployeeDialogOpen} onOpenChange={setIsEmployeeDialogOpen}>
