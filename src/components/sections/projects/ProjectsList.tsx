@@ -39,8 +39,16 @@ export const ProjectsList = (props: ProjectsListProps) => {
         </DialogHeader>
         <form onSubmit={handleAddProjectExpense} className="space-y-4">
           <div>
+            <Label htmlFor="expenseType">Тип расхода</Label>
+            <select id="expenseType" name="type" className="w-full border rounded-lg px-3 py-2" required>
+              <option value="materials">Материалы</option>
+              <option value="labor">Работа</option>
+              <option value="other">Прочее</option>
+            </select>
+          </div>
+          <div>
             <Label htmlFor="expenseAmount">Сумма (₽)</Label>
-            <Input id="expenseAmount" name="amount" type="number" placeholder="100000" required />
+            <Input id="expenseAmount" name="amount" type="number" step="0.01" placeholder="100000.00" required />
           </div>
           <div>
             <Label htmlFor="expenseDescription">Описание</Label>
@@ -59,7 +67,7 @@ export const ProjectsList = (props: ProjectsListProps) => {
         <form onSubmit={handleAddProjectIncome} className="space-y-4">
           <div>
             <Label htmlFor="incomeAmount">Сумма (₽)</Label>
-            <Input id="incomeAmount" name="amount" type="number" placeholder="500000" required />
+            <Input id="incomeAmount" name="amount" type="number" step="0.01" placeholder="500000.00" required />
           </div>
           <div>
             <Label htmlFor="incomeDescription">Описание</Label>
@@ -176,18 +184,37 @@ export const ProjectsList = (props: ProjectsListProps) => {
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-3 gap-2 text-sm">
-              <div>
-                <p className="text-muted-foreground text-xs">Бюджет</p>
-                <p className="font-semibold">{(project.budget / 1000000).toFixed(1)}м</p>
+            <div className="space-y-3">
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <p className="text-muted-foreground text-xs">Бюджет</p>
+                  <p className="font-semibold">{project.budget.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ₽</p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground text-xs">Доходы</p>
+                  <p className="font-semibold text-green-600">{project.income.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ₽</p>
+                </div>
               </div>
-              <div>
-                <p className="text-muted-foreground text-xs">Расходы</p>
-                <p className="font-semibold text-red-600">{(project.spent / 1000000).toFixed(1)}м</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground text-xs">Доходы</p>
-                <p className="font-semibold text-green-600">{(project.income / 1000000).toFixed(1)}м</p>
+              <div className="border-t pt-2">
+                <p className="text-muted-foreground text-xs mb-2">Расходы</p>
+                <div className="grid grid-cols-3 gap-2 text-xs">
+                  <div>
+                    <p className="text-muted-foreground">Материалы</p>
+                    <p className="font-semibold text-red-600">{(project.materials || 0).toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground">Работа</p>
+                    <p className="font-semibold text-red-600">{(project.labor || 0).toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground">Прочее</p>
+                    <p className="font-semibold text-red-600">{(project.other || 0).toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                  </div>
+                </div>
+                <div className="mt-2 pt-2 border-t">
+                  <p className="text-xs text-muted-foreground">Всего расходов</p>
+                  <p className="font-bold text-red-600">{project.spent.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ₽</p>
+                </div>
               </div>
             </div>
             

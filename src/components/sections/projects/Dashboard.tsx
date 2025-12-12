@@ -80,7 +80,7 @@ export const Dashboard = (props: DashboardProps) => {
             <CardTitle className="text-sm font-medium opacity-90">Общий бюджет</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{(totalBudget / 1000000).toFixed(1)} млн ₽</div>
+            <div className="text-3xl font-bold">{totalBudget.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ₽</div>
           </CardContent>
         </Card>
         
@@ -89,7 +89,7 @@ export const Dashboard = (props: DashboardProps) => {
             <CardTitle className="text-sm font-medium opacity-90">Расходы</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{(totalSpent / 1000000).toFixed(1)} млн ₽</div>
+            <div className="text-3xl font-bold">{totalSpent.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ₽</div>
           </CardContent>
         </Card>
         
@@ -98,7 +98,7 @@ export const Dashboard = (props: DashboardProps) => {
             <CardTitle className="text-sm font-medium opacity-90">Доходы</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{(totalIncome / 1000000).toFixed(1)} млн ₽</div>
+            <div className="text-3xl font-bold">{totalIncome.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ₽</div>
           </CardContent>
         </Card>
       </div>
@@ -131,7 +131,7 @@ export const Dashboard = (props: DashboardProps) => {
                     <p className="text-xs text-muted-foreground mb-2">{project.address}</p>
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Потрачено:</span>
-                      <span className="font-medium">{(project.spent / 1000000).toFixed(2)} млн ₽</span>
+                      <span className="font-medium">{project.spent.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ₽</span>
                     </div>
                   </div>
                 ))}
@@ -164,7 +164,7 @@ export const Dashboard = (props: DashboardProps) => {
                           {expense.projectName} • {expense.stageName}
                         </p>
                       </div>
-                      <span className="font-semibold">{expense.amount.toLocaleString()} ₽</span>
+                      <span className="font-semibold">{expense.amount.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ₽</span>
                     </div>
                     <Badge variant="secondary" className="text-xs">
                       {expense.type === 'materials' ? 'Материалы' : 'Работы'}

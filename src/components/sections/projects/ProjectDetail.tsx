@@ -42,21 +42,13 @@ export const ProjectDetail = (props: ProjectDetailProps) => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium">Бюджет</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{(project.budget / 1000000).toFixed(2)} млн ₽</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">Расходы</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-red-600">{(project.spent / 1000000).toFixed(2)} млн ₽</div>
+            <div className="text-2xl font-bold">{project.budget.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ₽</div>
           </CardContent>
         </Card>
         <Card>
@@ -64,10 +56,37 @@ export const ProjectDetail = (props: ProjectDetailProps) => {
             <CardTitle className="text-sm font-medium">Доходы</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">{(project.income / 1000000).toFixed(2)} млн ₽</div>
+            <div className="text-2xl font-bold text-green-600">{project.income.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ₽</div>
           </CardContent>
         </Card>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Расходы по категориям</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-3 gap-4">
+            <div>
+              <p className="text-sm text-muted-foreground mb-1">Материалы</p>
+              <p className="text-xl font-bold text-red-600">{(project.materials || 0).toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ₽</p>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground mb-1">Работа</p>
+              <p className="text-xl font-bold text-red-600">{(project.labor || 0).toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ₽</p>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground mb-1">Прочее</p>
+              <p className="text-xl font-bold text-red-600">{(project.other || 0).toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ₽</p>
+            </div>
+          </div>
+          <Separator className="my-4" />
+          <div className="flex justify-between items-center">
+            <span className="text-sm font-medium">Всего расходов</span>
+            <span className="text-2xl font-bold text-red-600">{project.spent.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ₽</span>
+          </div>
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>

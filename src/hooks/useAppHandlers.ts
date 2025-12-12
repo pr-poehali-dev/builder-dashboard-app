@@ -74,6 +74,9 @@ export const useAppHandlers = (props: UseAppHandlersProps) => {
       budget: Number(formData.get('budget')),
       spent: 0,
       income: 0,
+      materials: 0,
+      labor: 0,
+      other: 0,
       archived: false,
       comments: [],
       stages: []
@@ -311,17 +314,22 @@ export const useAppHandlers = (props: UseAppHandlersProps) => {
     const formData = new FormData(e.currentTarget);
     const projectId = props.selectedProjectForTransaction;
     const amount = Number(formData.get('amount'));
+    const type = formData.get('type') as string;
     
     props.setProjects(props.projects.map(p => {
       if (p.id === projectId) {
-        return { ...p, spent: p.spent + amount };
+        const updated = { ...p, spent: p.spent + amount };
+        if (type === 'materials') updated.materials = (updated.materials || 0) + amount;
+        if (type === 'labor') updated.labor = (updated.labor || 0) + amount;
+        if (type === 'other') updated.other = (updated.other || 0) + amount;
+        return updated;
       }
       return p;
     }));
     
     props.setIsProjectExpenseDialogOpen(false);
     props.setSelectedProjectForTransaction(null);
-    toast({ title: 'Расход добавлен', description: `Расход ${amount.toLocaleString()} ₽ добавлен в проект` });
+    toast({ title: 'Расход добавлен', description: `Расход ${amount.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ₽ добавлен` });
   };
 
   const handleAddProjectIncome = (e: React.FormEvent<HTMLFormElement>) => {
