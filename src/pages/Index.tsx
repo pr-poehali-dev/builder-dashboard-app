@@ -862,68 +862,67 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="flex">
-        <aside className="w-64 bg-white border-r min-h-screen p-6 space-y-2">
-          <div className="mb-8">
-            <h1 className="text-2xl font-bold text-primary">СтройКонтроль</h1>
-            <p className="text-xs text-muted-foreground">Управление объектами</p>
+      <header className="bg-white border-b sticky top-0 z-10">
+        <div className="container mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-primary">СтройКонтроль</h1>
+              <p className="text-xs text-muted-foreground">Управление объектами</p>
+            </div>
+            
+            <nav className="flex gap-1">
+              <Button 
+                variant={activeSection === 'dashboard' ? 'default' : 'ghost'} 
+                onClick={() => setActiveSection('dashboard')}
+              >
+                <Icon name="LayoutDashboard" size={18} className="mr-2" />
+                Дашборд
+              </Button>
+              
+              <Button 
+                variant={activeSection === 'finances' ? 'default' : 'ghost'} 
+                onClick={() => setActiveSection('finances')}
+              >
+                <Icon name="DollarSign" size={18} className="mr-2" />
+                Финансы
+              </Button>
+              
+              <Button 
+                variant={activeSection === 'employees' ? 'default' : 'ghost'} 
+                onClick={() => setActiveSection('employees')}
+              >
+                <Icon name="Users" size={18} className="mr-2" />
+                Сотрудники
+              </Button>
+              
+              <Button 
+                variant={activeSection === 'tasks' ? 'default' : 'ghost'} 
+                onClick={() => setActiveSection('tasks')}
+              >
+                <Icon name="CheckSquare" size={18} className="mr-2" />
+                Задачи
+              </Button>
+              
+              <Button 
+                variant={activeSection === 'profile' ? 'default' : 'ghost'} 
+                onClick={() => setActiveSection('profile')}
+              >
+                <Icon name="User" size={18} className="mr-2" />
+                Профиль
+              </Button>
+            </nav>
           </div>
-          
-          <Button 
-            variant={activeSection === 'dashboard' ? 'default' : 'ghost'} 
-            className="w-full justify-start"
-            onClick={() => setActiveSection('dashboard')}
-          >
-            <Icon name="LayoutDashboard" size={20} className="mr-3" />
-            Дашборд
-          </Button>
-          
-          <Button 
-            variant={activeSection === 'finances' ? 'default' : 'ghost'} 
-            className="w-full justify-start"
-            onClick={() => setActiveSection('finances')}
-          >
-            <Icon name="DollarSign" size={20} className="mr-3" />
-            Финансы
-          </Button>
-          
-          <Button 
-            variant={activeSection === 'employees' ? 'default' : 'ghost'} 
-            className="w-full justify-start"
-            onClick={() => setActiveSection('employees')}
-          >
-            <Icon name="Users" size={20} className="mr-3" />
-            Сотрудники
-          </Button>
-          
-          <Button 
-            variant={activeSection === 'tasks' ? 'default' : 'ghost'} 
-            className="w-full justify-start"
-            onClick={() => setActiveSection('tasks')}
-          >
-            <Icon name="CheckSquare" size={20} className="mr-3" />
-            Задачи
-          </Button>
-          
-          <Button 
-            variant={activeSection === 'profile' ? 'default' : 'ghost'} 
-            className="w-full justify-start"
-            onClick={() => setActiveSection('profile')}
-          >
-            <Icon name="User" size={20} className="mr-3" />
-            Профиль
-          </Button>
-        </aside>
+        </div>
+      </header>
 
-        <main className="flex-1 p-8">
-          {activeSection === 'project-detail' && renderProjectDetail()}
-          {activeSection === 'dashboard' && renderDashboard()}
-          {activeSection === 'finances' && renderFinances()}
-          {activeSection === 'employees' && renderEmployees()}
-          {activeSection === 'tasks' && renderTasks()}
-          {activeSection === 'profile' && renderProfile()}
-        </main>
-      </div>
+      <main className="container mx-auto px-6 py-8">
+        {activeSection === 'project-detail' && renderProjectDetail()}
+        {activeSection === 'dashboard' && renderDashboard()}
+        {activeSection === 'finances' && renderFinances()}
+        {activeSection === 'employees' && renderEmployees()}
+        {activeSection === 'tasks' && renderTasks()}
+        {activeSection === 'profile' && renderProfile()}
+      </main>
     </div>
   );
 };
