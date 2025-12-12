@@ -1,12 +1,16 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Icon from '@/components/ui/icon';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { mockProjects, mockEmployees, mockTasks, mockCompanyExpenses, mockExpenseCategories } from '@/data/mockData';
 import { renderDashboard, renderProjects, renderExpenses, renderFinances, renderProjectDetail } from '@/components/sections/ProjectSections';
 import { renderEmployees, renderTasks, renderProfile } from '@/components/sections/TeamSections';
+import Auth from './Auth';
+import Onboarding from '@/components/Onboarding';
 
 const Index = () => {
+  const [user, setUser] = useState<any>(null);
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const [activeSection, setActiveSection] = useState('dashboard');
   const [selectedProject, setSelectedProject] = useState<number | null>(null);
   const [viewingProject, setViewingProject] = useState<number | null>(null);
@@ -32,6 +36,45 @@ const Index = () => {
   const [filterMaxAmount, setFilterMaxAmount] = useState<string>('');
   const [showArchivedEmployees, setShowArchivedEmployees] = useState(false);
   const { toast } = useToast();
+
+  useEffect(() => {
+    const currentUser = localStorage.getItem('currentUser');
+    if (currentUser) {
+      const userData = JSON.parse(currentUser);
+      setUser(userData);
+      if (userData.firstLogin) {
+        setShowOnboarding(true);
+      }
+    }
+  }, []);
+
+  const handleLogin = (userData: any) => {
+    setUser(userData);
+    localStorage.setItem('currentUser', JSON.stringify(userData));
+    if (userData.firstLogin) {
+      setShowOnboarding(true);
+    }
+  };
+
+  const handleOnboardingComplete = () => {
+    setShowOnboarding(false);
+    if (user.firstLogin) {
+      const updatedUser = { ...user, firstLogin: false };
+      setUser(updatedUser);
+      localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+      localStorage.setItem('user_' + user.phone, JSON.stringify(updatedUser));
+    }
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+    localStorage.removeItem('currentUser');
+    toast({ title: 'Выход выполнен', description: 'До скорой встречи!' });
+  };
+
+  if (!user) {
+    return <Auth onLogin={handleLogin} />;
+  }
 
   const totalBudget = projects.filter(p => !p.archived).reduce((acc, p) => acc + p.budget, 0);
   const totalSpent = projects.filter(p => !p.archived).reduce((acc, p) => acc + p.spent, 0);
@@ -371,16 +414,19 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b sticky top-0 z-10">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-primary">СтройКонтроль</h1>
-              <p className="text-xs text-muted-foreground">Управление объектами</p>
-            </div>
-            
-            <nav className="flex gap-1">
+    <>
+      {showOnboarding && <Onboarding userName={user.name} onComplete={handleOnboardingComplete} />}
+      
+      <div className="min-h-screen bg-gray-50">
+        <header className="bg-white border-b sticky top-0 z-10">
+          <div className="container mx-auto px-6 py-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-2xl font-bold text-primary">СтройКонтроль</h1>
+                <p className="text-xs text-muted-foreground">{user.company}</p>
+              </div>
+              
+              <nav className="flex gap-1 items-center">
               <Button 
                 variant={activeSection === 'dashboard' ? 'default' : 'ghost'} 
                 onClick={() => setActiveSection('dashboard')}
@@ -428,6 +474,15 @@ const Index = () => {
                 <Icon name="User" size={18} className="mr-2" />
                 Профиль
               </Button>
+              
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={handleLogout}
+                className="ml-2"
+              >
+                <Icon name="LogOut" size={18} />
+              </Button>
             </nav>
           </div>
         </div>
@@ -441,9 +496,10 @@ const Index = () => {
         {activeSection === 'finances' && renderFinances(sectionProps)}
         {activeSection === 'employees' && renderEmployees(sectionProps)}
         {activeSection === 'tasks' && renderTasks(sectionProps)}
-        {activeSection === 'profile' && renderProfile()}
+        {activeSection === 'profile' && renderProfile(user, handleLogout)}
       </main>
     </div>
+    </>
   );
 };
 

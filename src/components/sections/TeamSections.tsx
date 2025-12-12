@@ -236,35 +236,126 @@ export const renderTasks = (props: TeamSectionsProps) => {
   );
 };
 
-export const renderProfile = () => (
-  <div className="space-y-6">
-    <h2 className="text-2xl font-bold">Профиль</h2>
-    <Card>
-      <CardContent className="pt-6">
-        <div className="flex items-center gap-6 mb-6">
-          <Avatar className="h-24 w-24">
-            <AvatarFallback className="text-3xl bg-primary text-white">АП</AvatarFallback>
-          </Avatar>
-          <div>
-            <h3 className="text-2xl font-semibold">Алексей Петров</h3>
-            <p className="text-muted-foreground">Владелец компании</p>
+export const renderProfile = (user: any, handleLogout: () => void) => {
+  const getIndustryName = (industry: string) => {
+    const industries: Record<string, string> = {
+      construction: 'Строительство',
+      renovation: 'Ремонт и отделка',
+      engineering: 'Инженерные системы',
+      landscape: 'Благоустройство',
+      architecture: 'Архитектура и проектирование',
+      other: 'Другое'
+    };
+    return industries[industry] || industry;
+  };
+
+  const initials = user.name.split(' ').map((n: string) => n[0]).join('').toUpperCase();
+
+  return (
+    <div className="space-y-6">
+      <h2 className="text-2xl font-bold">Профиль</h2>
+      <Card>
+        <CardContent className="pt-6">
+          <div className="flex items-center gap-6 mb-6">
+            <Avatar className="h-24 w-24">
+              <AvatarFallback className="text-3xl bg-primary text-white">{initials}</AvatarFallback>
+            </Avatar>
+            <div className="flex-1">
+              <h3 className="text-2xl font-semibold">{user.name}</h3>
+              <p className="text-muted-foreground">{user.company}</p>
+            </div>
+            <Button variant="outline" onClick={handleLogout}>
+              <Icon name="LogOut" size={18} className="mr-2" />
+              Выйти
+            </Button>
           </div>
-        </div>
-        <div className="space-y-4">
-          <div>
-            <label className="text-sm font-medium">Email</label>
-            <p className="text-muted-foreground">alexey@example.com</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="text-sm font-medium">Телефон</label>
+              <p className="text-muted-foreground">{user.phone}</p>
+            </div>
+            <div>
+              <label className="text-sm font-medium">Направление</label>
+              <p className="text-muted-foreground">{getIndustryName(user.industry)}</p>
+            </div>
           </div>
-          <div>
-            <label className="text-sm font-medium">Телефон</label>
-            <p className="text-muted-foreground">+7 (999) 123-45-67</p>
-          </div>
-          <div>
-            <label className="text-sm font-medium">Компания</label>
-            <p className="text-muted-foreground">СтройМастер ООО</p>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  </div>
-);
+          
+          {(user.telegram || user.instagram || user.vk || user.website) && (
+            <>
+              <div className="border-t my-6"></div>
+              <div>
+                <h4 className="text-sm font-medium mb-4">Рабочие страницы</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {user.telegram && (
+                    <div>
+                      <label className="text-sm text-muted-foreground flex items-center gap-2">
+                        <Icon name="Send" size={14} />
+                        Telegram
+                      </label>
+                      <a 
+                        href={`https://t.me/${user.telegram.replace('@', '')}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary hover:underline"
+                      >
+                        {user.telegram}
+                      </a>
+                    </div>
+                  )}
+                  {user.instagram && (
+                    <div>
+                      <label className="text-sm text-muted-foreground flex items-center gap-2">
+                        <Icon name="Instagram" size={14} />
+                        Instagram
+                      </label>
+                      <a 
+                        href={`https://instagram.com/${user.instagram.replace('@', '')}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary hover:underline"
+                      >
+                        {user.instagram}
+                      </a>
+                    </div>
+                  )}
+                  {user.vk && (
+                    <div>
+                      <label className="text-sm text-muted-foreground flex items-center gap-2">
+                        <Icon name="Share2" size={14} />
+                        ВКонтакте
+                      </label>
+                      <a 
+                        href={user.vk.startsWith('http') ? user.vk : `https://${user.vk}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary hover:underline"
+                      >
+                        {user.vk}
+                      </a>
+                    </div>
+                  )}
+                  {user.website && (
+                    <div>
+                      <label className="text-sm text-muted-foreground flex items-center gap-2">
+                        <Icon name="Globe" size={14} />
+                        Сайт
+                      </label>
+                      <a 
+                        href={user.website}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary hover:underline"
+                      >
+                        {user.website}
+                      </a>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+};

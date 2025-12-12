@@ -1,0 +1,222 @@
+import { useState } from 'react';
+import Icon from '@/components/ui/icon';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useToast } from '@/hooks/use-toast';
+
+interface AuthProps {
+  onLogin: (userData: any) => void;
+}
+
+const Auth = ({ onLogin }: AuthProps) => {
+  const [isLogin, setIsLogin] = useState(true);
+  const { toast } = useToast();
+
+  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    
+    const phone = formData.get('phone') as string;
+    
+    const savedUser = localStorage.getItem('user_' + phone);
+    if (savedUser) {
+      const userData = JSON.parse(savedUser);
+      onLogin(userData);
+      toast({ title: 'Вход выполнен', description: `Добро пожаловать, ${userData.name}!` });
+    } else {
+      toast({ 
+        title: 'Ошибка входа', 
+        description: 'Пользователь не найден. Зарегистрируйтесь.',
+        variant: 'destructive'
+      });
+    }
+  };
+
+  const handleRegister = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    
+    const userData = {
+      name: formData.get('name') as string,
+      company: formData.get('company') as string,
+      phone: formData.get('phone') as string,
+      industry: formData.get('industry') as string,
+      telegram: formData.get('telegram') as string || '',
+      instagram: formData.get('instagram') as string || '',
+      vk: formData.get('vk') as string || '',
+      website: formData.get('website') as string || '',
+      firstLogin: true
+    };
+
+    localStorage.setItem('user_' + userData.phone, JSON.stringify(userData));
+    onLogin(userData);
+    toast({ title: 'Регистрация успешна', description: `Добро пожаловать в СтройКонтроль, ${userData.name}!` });
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-primary/10 via-background to-secondary/10 flex items-center justify-center p-4">
+      <Card className="w-full max-w-2xl shadow-xl">
+        <CardHeader className="text-center space-y-2">
+          <div className="flex justify-center mb-4">
+            <div className="h-16 w-16 rounded-full bg-primary flex items-center justify-center">
+              <Icon name="Building2" size={32} className="text-white" />
+            </div>
+          </div>
+          <CardTitle className="text-3xl font-bold">СтройКонтроль</CardTitle>
+          <CardDescription className="text-base">
+            {isLogin ? 'Войдите в свой аккаунт' : 'Создайте аккаунт для управления объектами'}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {isLogin ? (
+            <form onSubmit={handleLogin} className="space-y-4">
+              <div>
+                <Label htmlFor="loginPhone">Номер телефона</Label>
+                <Input 
+                  id="loginPhone" 
+                  name="phone" 
+                  type="tel" 
+                  placeholder="+7 (999) 123-45-67" 
+                  required 
+                />
+              </div>
+              <Button type="submit" className="w-full" size="lg">
+                Войти
+              </Button>
+              <div className="text-center pt-4">
+                <button
+                  type="button"
+                  onClick={() => setIsLogin(false)}
+                  className="text-sm text-primary hover:underline"
+                >
+                  Нет аккаунта? Зарегистрируйтесь
+                </button>
+              </div>
+            </form>
+          ) : (
+            <form onSubmit={handleRegister} className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="name">Ваше имя *</Label>
+                  <Input 
+                    id="name" 
+                    name="name" 
+                    placeholder="Алексей Петров" 
+                    required 
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="company">Название компании *</Label>
+                  <Input 
+                    id="company" 
+                    name="company" 
+                    placeholder="СтройМастер ООО" 
+                    required 
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="phone">Номер телефона *</Label>
+                  <Input 
+                    id="phone" 
+                    name="phone" 
+                    type="tel" 
+                    placeholder="+7 (999) 123-45-67" 
+                    required 
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="industry">Направление деятельности *</Label>
+                  <select 
+                    id="industry" 
+                    name="industry" 
+                    className="w-full border rounded-lg px-3 py-2 text-sm"
+                    required
+                  >
+                    <option value="">Выберите направление</option>
+                    <option value="construction">Строительство</option>
+                    <option value="renovation">Ремонт и отделка</option>
+                    <option value="engineering">Инженерные системы</option>
+                    <option value="landscape">Благоустройство</option>
+                    <option value="architecture">Архитектура и проектирование</option>
+                    <option value="other">Другое</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="pt-2 border-t">
+                <p className="text-sm font-medium mb-3">Рабочие страницы (опционально)</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="telegram" className="flex items-center gap-2">
+                      <Icon name="Send" size={14} />
+                      Telegram
+                    </Label>
+                    <Input 
+                      id="telegram" 
+                      name="telegram" 
+                      placeholder="@username" 
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="instagram" className="flex items-center gap-2">
+                      <Icon name="Instagram" size={14} />
+                      Instagram
+                    </Label>
+                    <Input 
+                      id="instagram" 
+                      name="instagram" 
+                      placeholder="@company_name" 
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="vk" className="flex items-center gap-2">
+                      <Icon name="Share2" size={14} />
+                      ВКонтакте
+                    </Label>
+                    <Input 
+                      id="vk" 
+                      name="vk" 
+                      placeholder="vk.com/company" 
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="website" className="flex items-center gap-2">
+                      <Icon name="Globe" size={14} />
+                      Сайт
+                    </Label>
+                    <Input 
+                      id="website" 
+                      name="website" 
+                      type="url" 
+                      placeholder="https://example.com" 
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <Button type="submit" className="w-full" size="lg">
+                Зарегистрироваться
+              </Button>
+              <div className="text-center pt-2">
+                <button
+                  type="button"
+                  onClick={() => setIsLogin(true)}
+                  className="text-sm text-primary hover:underline"
+                >
+                  Уже есть аккаунт? Войдите
+                </button>
+              </div>
+            </form>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
+export default Auth;
