@@ -96,3 +96,10 @@ export const mockTasks = [
   { id: 2, title: 'Установить окна', project: 'Коттедж на Лесной', assignee: 'Сергей Иванов', status: 'Ожидает' },
   { id: 3, title: 'Провести проводку', project: 'ЖК Новый Горизонт', assignee: 'Михаил Сидоров', status: 'В работе' },
 ];
+
+export const mockCompanyExpenses = [
+  { id: 1, description: 'Аренда офиса', amount: 50000, category: 'rent', date: '2024-12-01', receipt: null },
+  { id: 2, description: 'Зарплата персонала', amount: 250000, category: 'salary', date: '2024-12-01', receipt: null },
+  { id: 3, description: 'Топливо для техники', amount: 35000, category: 'fuel', date: '2024-12-05', receipt: null },
+  { id: 4, description: 'Налоги', amount: 120000, category: 'taxes', date: '2024-12-10', receipt: null },
+];

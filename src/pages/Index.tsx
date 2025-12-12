@@ -2,7 +2,7 @@ import { useState } from 'react';
 import Icon from '@/components/ui/icon';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { mockProjects, mockEmployees, mockTasks } from '@/data/mockData';
+import { mockProjects, mockEmployees, mockTasks, mockCompanyExpenses } from '@/data/mockData';
 import { renderDashboard, renderProjects, renderExpenses, renderFinances, renderProjectDetail } from '@/components/sections/ProjectSections';
 import { renderEmployees, renderTasks, renderProfile } from '@/components/sections/TeamSections';
 
@@ -13,12 +13,14 @@ const Index = () => {
   const [projects, setProjects] = useState(mockProjects);
   const [employees, setEmployees] = useState(mockEmployees);
   const [tasks, setTasks] = useState(mockTasks);
+  const [companyExpenses, setCompanyExpenses] = useState(mockCompanyExpenses);
   const [isProjectDialogOpen, setIsProjectDialogOpen] = useState(false);
   const [isStageDialogOpen, setIsStageDialogOpen] = useState(false);
   const [isEmployeeDialogOpen, setIsEmployeeDialogOpen] = useState(false);
   const [isTaskDialogOpen, setIsTaskDialogOpen] = useState(false);
   const [isExpenseDialogOpen, setIsExpenseDialogOpen] = useState(false);
   const [isCommentDialogOpen, setIsCommentDialogOpen] = useState(false);
+  const [isCompanyExpenseDialogOpen, setIsCompanyExpenseDialogOpen] = useState(false);
   const [selectedStage, setSelectedStage] = useState<number | null>(null);
   const [filterProject, setFilterProject] = useState<string>('all');
   const [filterDate, setFilterDate] = useState<string>('');
@@ -189,6 +191,26 @@ const Index = () => {
     toast({ title: 'Комментарий добавлен', description: 'Комментарий успешно создан' });
   };
 
+  const handleAddCompanyExpense = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const files = (e.currentTarget.elements.namedItem('receipt') as HTMLInputElement).files;
+    const receiptUrl = files && files.length > 0 ? URL.createObjectURL(files[0]) : null;
+    
+    const newExpense = {
+      id: Date.now(),
+      description: formData.get('description') as string,
+      amount: Number(formData.get('amount')),
+      category: formData.get('category') as string,
+      date: formData.get('date') as string || new Date().toISOString().split('T')[0],
+      receipt: receiptUrl
+    };
+
+    setCompanyExpenses([...companyExpenses, newExpense]);
+    setIsCompanyExpenseDialogOpen(false);
+    toast({ title: 'Расход компании добавлен', description: `Расход на ${newExpense.amount.toLocaleString()} ₽ добавлен` });
+  };
+
   const getAllExpenses = () => {
     const allExpenses: Array<{
       id: number;
@@ -245,6 +267,7 @@ const Index = () => {
     projects,
     employees,
     tasks,
+    companyExpenses,
     totalBudget,
     totalSpent,
     totalIncome,
@@ -258,6 +281,7 @@ const Index = () => {
     isTaskDialogOpen,
     isExpenseDialogOpen,
     isCommentDialogOpen,
+    isCompanyExpenseDialogOpen,
     selectedStage,
     viewingProject,
     selectedProject,
@@ -274,6 +298,7 @@ const Index = () => {
     setIsTaskDialogOpen,
     setIsExpenseDialogOpen,
     setIsCommentDialogOpen,
+    setIsCompanyExpenseDialogOpen,
     setSelectedStage,
     setSelectedProject,
     setShowArchivedEmployees,
@@ -283,6 +308,7 @@ const Index = () => {
     handleAddTask,
     handleAddExpense,
     handleAddComment,
+    handleAddCompanyExpense,
     handleArchiveProject,
     handleUnarchiveProject,
     handleArchiveEmployee,

@@ -7,17 +7,34 @@ import { Label } from '@/components/ui/label';
 
 interface FinancesViewProps {
   projects: any[];
+  companyExpenses: any[];
   selectedProject: number | null;
   setSelectedProject: (id: number | null) => void;
   isStageDialogOpen: boolean;
   setIsStageDialogOpen: (open: boolean) => void;
+  isCompanyExpenseDialogOpen: boolean;
+  setIsCompanyExpenseDialogOpen: (open: boolean) => void;
   handleAddStage: (e: React.FormEvent<HTMLFormElement>) => void;
+  handleAddCompanyExpense: (e: React.FormEvent<HTMLFormElement>) => void;
 }
 
 export const FinancesView = (props: FinancesViewProps) => {
-  const { projects, selectedProject, setSelectedProject, isStageDialogOpen, setIsStageDialogOpen, handleAddStage } = props;
+  const { projects, companyExpenses, selectedProject, setSelectedProject, isStageDialogOpen, setIsStageDialogOpen, isCompanyExpenseDialogOpen, setIsCompanyExpenseDialogOpen, handleAddStage, handleAddCompanyExpense } = props;
   const activeProjects = projects.filter(p => !p.archived);
   const project = activeProjects.find(p => p.id === selectedProject) || activeProjects[0];
+  
+  const getCategoryName = (category: string) => {
+    const categories: Record<string, string> = {
+      rent: 'Аренда',
+      salary: 'Зарплата',
+      fuel: 'Топливо',
+      taxes: 'Налоги',
+      other: 'Прочее'
+    };
+    return categories[category] || category;
+  };
+  
+  const totalCompanyExpenses = companyExpenses.reduce((acc, e) => acc + e.amount, 0);
   
   if (!project) {
     return (
@@ -176,6 +193,96 @@ export const FinancesView = (props: FinancesViewProps) => {
           </CardContent>
         </Card>
       </div>
+
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle>Расходы компании</CardTitle>
+            <Dialog open={isCompanyExpenseDialogOpen} onOpenChange={setIsCompanyExpenseDialogOpen}>
+              <DialogTrigger asChild>
+                <Button size="sm">
+                  <Icon name="Plus" size={16} className="mr-2" />
+                  Добавить расход
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Добавить расход компании</DialogTitle>
+                </DialogHeader>
+                <form onSubmit={handleAddCompanyExpense} className="space-y-4">
+                  <div>
+                    <Label htmlFor="companyDescription">Описание</Label>
+                    <Input id="companyDescription" name="description" placeholder="Аренда офиса" required />
+                  </div>
+                  <div>
+                    <Label htmlFor="companyAmount">Сумма (₽)</Label>
+                    <Input id="companyAmount" name="amount" type="number" placeholder="50000" required />
+                  </div>
+                  <div>
+                    <Label htmlFor="companyCategory">Категория</Label>
+                    <select id="companyCategory" name="category" className="w-full border rounded-lg px-3 py-2" required>
+                      <option value="rent">Аренда</option>
+                      <option value="salary">Зарплата</option>
+                      <option value="fuel">Топливо</option>
+                      <option value="taxes">Налоги</option>
+                      <option value="other">Прочее</option>
+                    </select>
+                  </div>
+                  <div>
+                    <Label htmlFor="companyDate">Дата</Label>
+                    <Input id="companyDate" name="date" type="date" />
+                  </div>
+                  <div>
+                    <Label htmlFor="companyReceipt">Фото чека (опционально)</Label>
+                    <Input id="companyReceipt" name="receipt" type="file" accept="image/*" />
+                  </div>
+                  <Button type="submit" className="w-full">Добавить расход</Button>
+                </form>
+              </DialogContent>
+            </Dialog>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div className="flex justify-between items-center p-4 bg-muted rounded-lg">
+              <span className="font-semibold">Всего расходов компании:</span>
+              <span className="text-lg font-bold text-red-600">{totalCompanyExpenses.toLocaleString()} ₽</span>
+            </div>
+            
+            {companyExpenses.length === 0 ? (
+              <p className="text-sm text-muted-foreground text-center py-4">Расходов компании пока нет</p>
+            ) : (
+              <div className="space-y-2">
+                {companyExpenses.map(expense => (
+                  <div key={expense.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent transition-colors">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-1">
+                        <h4 className="font-medium">{expense.description}</h4>
+                        <span className="text-xs px-2 py-1 rounded bg-secondary text-secondary-foreground">
+                          {getCategoryName(expense.category)}
+                        </span>
+                      </div>
+                      <p className="text-xs text-muted-foreground">{expense.date}</p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="text-lg font-semibold text-red-600">{expense.amount.toLocaleString()} ₽</span>
+                      {expense.receipt && (
+                        <Button 
+                          size="sm" 
+                          variant="ghost"
+                          onClick={() => window.open(expense.receipt!, '_blank')}
+                        >
+                          <Icon name="Receipt" size={16} />
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };
