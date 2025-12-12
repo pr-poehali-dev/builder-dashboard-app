@@ -122,6 +122,10 @@ const Index = () => {
   const [isExpenseDialogOpen, setIsExpenseDialogOpen] = useState(false);
   const [isCommentDialogOpen, setIsCommentDialogOpen] = useState(false);
   const [selectedStage, setSelectedStage] = useState<number | null>(null);
+  const [filterProject, setFilterProject] = useState<string>('all');
+  const [filterDate, setFilterDate] = useState<string>('');
+  const [filterMinAmount, setFilterMinAmount] = useState<string>('');
+  const [filterMaxAmount, setFilterMaxAmount] = useState<string>('');
   const { toast } = useToast();
 
   const totalBudget = projects.reduce((acc, p) => acc + p.budget, 0);
@@ -252,108 +256,358 @@ const Index = () => {
     toast({ title: 'Комментарий добавлен', description: 'Комментарий успешно создан' });
   };
 
-  const renderDashboard = () => (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium opacity-90">Общий бюджет</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">{(totalBudget / 1000000).toFixed(1)} млн ₽</div>
-          </CardContent>
-        </Card>
-        
-        <Card className="bg-gradient-to-br from-red-500 to-red-600 text-white">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium opacity-90">Расходы</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">{(totalSpent / 1000000).toFixed(1)} млн ₽</div>
-          </CardContent>
-        </Card>
-        
-        <Card className="bg-gradient-to-br from-green-500 to-green-600 text-white">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium opacity-90">Доходы</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">{(totalIncome / 1000000).toFixed(1)} млн ₽</div>
-          </CardContent>
-        </Card>
-      </div>
+  const getAllExpenses = () => {
+    const allExpenses: Array<{
+      id: number;
+      description: string;
+      amount: number;
+      type: string;
+      receipt: string | null;
+      projectName: string;
+      projectId: number;
+      stageName: string;
+      date: string;
+    }> = [];
 
-      <div>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-2xl font-bold">Объекты</h2>
-          <Dialog open={isProjectDialogOpen} onOpenChange={setIsProjectDialogOpen}>
-            <DialogTrigger asChild>
-              <Button>
-                <Icon name="Plus" size={18} className="mr-2" />
-                Новый объект
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Создать новый объект</DialogTitle>
-              </DialogHeader>
-              <form onSubmit={handleAddProject} className="space-y-4">
-                <div>
-                  <Label htmlFor="name">Название объекта</Label>
-                  <Input id="name" name="name" placeholder="ЖК Солнечный" required />
-                </div>
-                <div>
-                  <Label htmlFor="address">Адрес</Label>
-                  <Input id="address" name="address" placeholder="ул. Мира, 10" required />
-                </div>
-                <div>
-                  <Label htmlFor="budget">Бюджет (₽)</Label>
-                  <Input id="budget" name="budget" type="number" placeholder="5000000" required />
-                </div>
-                <Button type="submit" className="w-full">Создать объект</Button>
-              </form>
-            </DialogContent>
-          </Dialog>
+    projects.forEach(project => {
+      project.stages.forEach(stage => {
+        stage.expenses.forEach(expense => {
+          allExpenses.push({
+            ...expense,
+            projectName: project.name,
+            projectId: project.id,
+            stageName: stage.name,
+            date: new Date().toISOString().split('T')[0]
+          });
+        });
+      });
+    });
+
+    return allExpenses.sort((a, b) => b.id - a.id);
+  };
+
+  const getFilteredExpenses = () => {
+    let expenses = getAllExpenses();
+
+    if (filterProject !== 'all') {
+      expenses = expenses.filter(e => e.projectId === Number(filterProject));
+    }
+
+    if (filterDate) {
+      expenses = expenses.filter(e => e.date === filterDate);
+    }
+
+    if (filterMinAmount) {
+      expenses = expenses.filter(e => e.amount >= Number(filterMinAmount));
+    }
+
+    if (filterMaxAmount) {
+      expenses = expenses.filter(e => e.amount <= Number(filterMaxAmount));
+    }
+
+    return expenses;
+  };
+
+  const renderDashboard = () => {
+    const activeProjects = projects.filter(p => p.spent < p.budget);
+    const recentExpenses = getAllExpenses().slice(0, 5);
+
+    return (
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium opacity-90">Общий бюджет</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold">{(totalBudget / 1000000).toFixed(1)} млн ₽</div>
+            </CardContent>
+          </Card>
+          
+          <Card className="bg-gradient-to-br from-red-500 to-red-600 text-white">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium opacity-90">Расходы</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold">{(totalSpent / 1000000).toFixed(1)} млн ₽</div>
+            </CardContent>
+          </Card>
+          
+          <Card className="bg-gradient-to-br from-green-500 to-green-600 text-white">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium opacity-90">Доходы</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold">{(totalIncome / 1000000).toFixed(1)} млн ₽</div>
+            </CardContent>
+          </Card>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {projects.map(project => (
-            <Card 
-              key={project.id} 
-              className="hover:shadow-lg transition-shadow cursor-pointer"
-              onClick={() => {
-                setViewingProject(project.id);
-                setActiveSection('project-detail');
-              }}
-            >
-              <CardHeader>
-                <CardTitle>{project.name}</CardTitle>
-                <p className="text-sm text-muted-foreground flex items-center gap-2">
-                  <Icon name="MapPin" size={14} />
-                  {project.address}
-                </p>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-3 gap-2 text-sm">
-                  <div>
-                    <p className="text-muted-foreground text-xs">Бюджет</p>
-                    <p className="font-semibold">{(project.budget / 1000000).toFixed(1)}м</p>
-                  </div>
-                  <div>
-                    <p className="text-muted-foreground text-xs">Расходы</p>
-                    <p className="font-semibold text-red-600">{(project.spent / 1000000).toFixed(1)}м</p>
-                  </div>
-                  <div>
-                    <p className="text-muted-foreground text-xs">Доходы</p>
-                    <p className="font-semibold text-green-600">{(project.income / 1000000).toFixed(1)}м</p>
-                  </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Активные объекты</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {activeProjects.length === 0 ? (
+                <p className="text-sm text-muted-foreground">Нет активных объектов</p>
+              ) : (
+                <div className="space-y-3">
+                  {activeProjects.map(project => (
+                    <div 
+                      key={project.id} 
+                      className="p-4 border rounded-lg hover:bg-accent transition-colors cursor-pointer"
+                      onClick={() => {
+                        setViewingProject(project.id);
+                        setActiveSection('project-detail');
+                      }}
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="font-semibold">{project.name}</h4>
+                        <Badge variant="outline">
+                          {((project.spent / project.budget) * 100).toFixed(0)}%
+                        </Badge>
+                      </div>
+                      <p className="text-xs text-muted-foreground mb-2">{project.address}</p>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Потрачено:</span>
+                        <span className="font-medium">{(project.spent / 1000000).toFixed(2)} млн ₽</span>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              </CardContent>
-            </Card>
-          ))}
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle>Последние расходы</CardTitle>
+                <Button variant="ghost" size="sm" onClick={() => setActiveSection('expenses')}>
+                  Все расходы
+                  <Icon name="ArrowRight" size={16} className="ml-2" />
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {recentExpenses.length === 0 ? (
+                <p className="text-sm text-muted-foreground">Расходов пока нет</p>
+              ) : (
+                <div className="space-y-3">
+                  {recentExpenses.map(expense => (
+                    <div key={expense.id} className="p-3 border rounded-lg">
+                      <div className="flex justify-between items-start mb-1">
+                        <div className="flex-1">
+                          <p className="font-medium text-sm">{expense.description}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {expense.projectName} • {expense.stageName}
+                          </p>
+                        </div>
+                        <span className="font-semibold">{expense.amount.toLocaleString()} ₽</span>
+                      </div>
+                      <Badge variant="secondary" className="text-xs">
+                        {expense.type === 'materials' ? 'Материалы' : 'Работы'}
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </div>
+      </div>
+    );
+  };
+
+  const renderProjects = () => (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold">Объекты</h2>
+        <Dialog open={isProjectDialogOpen} onOpenChange={setIsProjectDialogOpen}>
+          <DialogTrigger asChild>
+            <Button>
+              <Icon name="Plus" size={18} className="mr-2" />
+              Новый объект
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Создать новый объект</DialogTitle>
+            </DialogHeader>
+            <form onSubmit={handleAddProject} className="space-y-4">
+              <div>
+                <Label htmlFor="name">Название объекта</Label>
+                <Input id="name" name="name" placeholder="ЖК Солнечный" required />
+              </div>
+              <div>
+                <Label htmlFor="address">Адрес</Label>
+                <Input id="address" name="address" placeholder="ул. Мира, 10" required />
+              </div>
+              <div>
+                <Label htmlFor="budget">Бюджет (₽)</Label>
+                <Input id="budget" name="budget" type="number" placeholder="5000000" required />
+              </div>
+              <Button type="submit" className="w-full">Создать объект</Button>
+            </form>
+          </DialogContent>
+        </Dialog>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {projects.map(project => (
+          <Card 
+            key={project.id} 
+            className="hover:shadow-lg transition-shadow cursor-pointer"
+            onClick={() => {
+              setViewingProject(project.id);
+              setActiveSection('project-detail');
+            }}
+          >
+            <CardHeader>
+              <CardTitle>{project.name}</CardTitle>
+              <p className="text-sm text-muted-foreground flex items-center gap-2">
+                <Icon name="MapPin" size={14} />
+                {project.address}
+              </p>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-3 gap-2 text-sm">
+                <div>
+                  <p className="text-muted-foreground text-xs">Бюджет</p>
+                  <p className="font-semibold">{(project.budget / 1000000).toFixed(1)}м</p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground text-xs">Расходы</p>
+                  <p className="font-semibold text-red-600">{(project.spent / 1000000).toFixed(1)}м</p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground text-xs">Доходы</p>
+                  <p className="font-semibold text-green-600">{(project.income / 1000000).toFixed(1)}м</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
     </div>
   );
+
+  const renderExpenses = () => {
+    const filteredExpenses = getFilteredExpenses();
+
+    return (
+      <div className="space-y-6">
+        <h2 className="text-2xl font-bold">Все расходы</h2>
+        
+        <Card>
+          <CardHeader>
+            <CardTitle>Фильтры</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div>
+                <Label htmlFor="filterProject">Объект</Label>
+                <select 
+                  id="filterProject" 
+                  className="w-full border rounded-lg px-3 py-2"
+                  value={filterProject}
+                  onChange={(e) => setFilterProject(e.target.value)}
+                >
+                  <option value="all">Все объекты</option>
+                  {projects.map(p => (
+                    <option key={p.id} value={p.id}>{p.name}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <Label htmlFor="filterDate">Дата</Label>
+                <Input 
+                  id="filterDate" 
+                  type="date" 
+                  value={filterDate}
+                  onChange={(e) => setFilterDate(e.target.value)}
+                />
+              </div>
+              <div>
+                <Label htmlFor="filterMin">Мин. сумма</Label>
+                <Input 
+                  id="filterMin" 
+                  type="number" 
+                  placeholder="0"
+                  value={filterMinAmount}
+                  onChange={(e) => setFilterMinAmount(e.target.value)}
+                />
+              </div>
+              <div>
+                <Label htmlFor="filterMax">Макс. сумма</Label>
+                <Input 
+                  id="filterMax" 
+                  type="number" 
+                  placeholder="1000000"
+                  value={filterMaxAmount}
+                  onChange={(e) => setFilterMaxAmount(e.target.value)}
+                />
+              </div>
+            </div>
+            {(filterProject !== 'all' || filterDate || filterMinAmount || filterMaxAmount) && (
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="mt-4"
+                onClick={() => {
+                  setFilterProject('all');
+                  setFilterDate('');
+                  setFilterMinAmount('');
+                  setFilterMaxAmount('');
+                }}
+              >
+                <Icon name="X" size={16} className="mr-2" />
+                Сбросить фильтры
+              </Button>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="pt-6">
+            {filteredExpenses.length === 0 ? (
+              <p className="text-center text-muted-foreground py-8">Расходов не найдено</p>
+            ) : (
+              <div className="space-y-3">
+                {filteredExpenses.map(expense => (
+                  <div key={expense.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent transition-colors">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <h4 className="font-semibold">{expense.description}</h4>
+                        <Badge variant="secondary">
+                          {expense.type === 'materials' ? 'Материалы' : 'Работы'}
+                        </Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        {expense.projectName} • {expense.stageName} • {expense.date}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="text-lg font-bold">{expense.amount.toLocaleString()} ₽</span>
+                      {expense.receipt && (
+                        <Button 
+                          size="sm" 
+                          variant="ghost"
+                          onClick={() => window.open(expense.receipt!, '_blank')}
+                        >
+                          <Icon name="Receipt" size={18} />
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    );
+  };
 
   const renderFinances = () => {
     const project = projects.find(p => p.id === selectedProject) || projects[0];
@@ -880,6 +1134,14 @@ const Index = () => {
               </Button>
               
               <Button 
+                variant={activeSection === 'projects' ? 'default' : 'ghost'} 
+                onClick={() => setActiveSection('projects')}
+              >
+                <Icon name="Building2" size={18} className="mr-2" />
+                Объекты
+              </Button>
+              
+              <Button 
                 variant={activeSection === 'finances' ? 'default' : 'ghost'} 
                 onClick={() => setActiveSection('finances')}
               >
@@ -918,6 +1180,8 @@ const Index = () => {
       <main className="container mx-auto px-6 py-8">
         {activeSection === 'project-detail' && renderProjectDetail()}
         {activeSection === 'dashboard' && renderDashboard()}
+        {activeSection === 'projects' && renderProjects()}
+        {activeSection === 'expenses' && renderExpenses()}
         {activeSection === 'finances' && renderFinances()}
         {activeSection === 'employees' && renderEmployees()}
         {activeSection === 'tasks' && renderTasks()}
