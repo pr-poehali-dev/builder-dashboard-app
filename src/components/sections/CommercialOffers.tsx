@@ -341,35 +341,6 @@ export const CommercialOffers = ({ user }: CommercialOffersProps) => {
     toast({ title: 'Excel создан', description: 'Коммерческое предложение экспортировано в Excel' });
   };
 
-  if (!user.subscriptionActive) {
-    return (
-      <div className="space-y-6">
-        <div>
-          <h2 className="text-2xl font-bold mb-2">Коммерческие предложения</h2>
-          <p className="text-muted-foreground">Создание коммерческих предложений для клиентов</p>
-        </div>
-
-        <Card className="border-2 border-yellow-500">
-          <CardContent className="pt-6">
-            <div className="text-center space-y-4">
-              <Icon name="Lock" size={48} className="mx-auto text-yellow-500" />
-              <div>
-                <h3 className="text-xl font-bold mb-2">Функция доступна по подписке</h3>
-                <p className="text-muted-foreground mb-4">
-                  Генератор коммерческих предложений доступен только на платном тарифе
-                </p>
-                <Button onClick={() => window.location.hash = 'subscription'}>
-                  <Icon name="CreditCard" size={18} className="mr-2" />
-                  Оформить подписку
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
   const currentOffer = selectedOffer ? offers.find(o => o.id === selectedOffer) : null;
 
   if (currentOffer) {

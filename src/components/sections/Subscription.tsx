@@ -121,6 +121,10 @@ export const Subscription = ({ user, onUpdateUser }: SubscriptionProps) => {
                   <Icon name="Check" size={16} className="text-green-500" />
                   Прикрепление чеков
                 </li>
+                <li className="flex items-center gap-2 text-sm">
+                  <Icon name="X" size={16} className="text-red-500" />
+                  <span className="line-through text-muted-foreground">Генератор КП</span>
+                </li>
               </ul>
             </div>
           </CardContent>
@@ -160,6 +164,14 @@ export const Subscription = ({ user, onUpdateUser }: SubscriptionProps) => {
                 <li className="flex items-center gap-2 text-sm">
                   <Icon name="Check" size={16} className="text-green-500" />
                   Прикрепление чеков
+                </li>
+                <li className="flex items-center gap-2 text-sm">
+                  <Icon name="Check" size={16} className="text-green-500" />
+                  <span className="font-semibold">Генератор коммерческих предложений</span>
+                </li>
+                <li className="flex items-center gap-2 text-sm">
+                  <Icon name="Check" size={16} className="text-green-500" />
+                  Экспорт КП в PDF и Excel
                 </li>
               </ul>
             </div>
