@@ -7,6 +7,9 @@ import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
+import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import * as XLSX from 'xlsx';
 
 interface Room {
   id: number;
@@ -161,6 +164,183 @@ export const CommercialOffers = ({ user }: CommercialOffersProps) => {
     return offer.rooms.reduce((sum, room) => sum + calculateRoomTotal(room), 0);
   };
 
+  const exportToPDF = (offer: CommercialOffer) => {
+    const doc = new jsPDF();
+    
+    doc.addFont('https://cdn.jsdelivr.net/npm/dejavu-fonts-ttf@2.37.3/ttf/DejaVuSans.ttf', 'DejaVuSans', 'normal');
+    doc.setFont('DejaVuSans');
+    
+    doc.setFontSize(18);
+    doc.text('Коммерческое предложение', 14, 20);
+    
+    doc.setFontSize(12);
+    doc.text(`Адрес: ${offer.address}`, 14, 30);
+    doc.text(`Дата: ${offer.createdDate}`, 14, 37);
+    
+    let yPosition = 50;
+    
+    offer.rooms.forEach((room, roomIndex) => {
+      if (yPosition > 250) {
+        doc.addPage();
+        yPosition = 20;
+      }
+      
+      doc.setFontSize(14);
+      doc.setFont('DejaVuSans', 'bold');
+      doc.text(`${roomIndex + 1}. ${room.name}`, 14, yPosition);
+      yPosition += 7;
+      
+      doc.setFontSize(10);
+      doc.setFont('DejaVuSans', 'normal');
+      doc.text(`Площадь пола: ${room.area} м² | Площадь стен: ${room.wallArea} м²`, 14, yPosition);
+      yPosition += 10;
+      
+      if (room.works.length > 0) {
+        const workRows = room.works.map(work => [
+          work.name,
+          `${work.quantity} ${work.unit}`,
+          `${work.price.toLocaleString('ru-RU', { minimumFractionDigits: 2 })} ₽`,
+          `${(work.quantity * work.price).toLocaleString('ru-RU', { minimumFractionDigits: 2 })} ₽`
+        ]);
+        
+        autoTable(doc, {
+          startY: yPosition,
+          head: [['Работа', 'Количество', 'Цена', 'Сумма']],
+          body: workRows,
+          theme: 'grid',
+          headStyles: { fillColor: [79, 70, 229], font: 'DejaVuSans' },
+          bodyStyles: { font: 'DejaVuSans' },
+          styles: { fontSize: 9 }
+        });
+        
+        yPosition = (doc as any).lastAutoTable.finalY + 5;
+      }
+      
+      if (room.materials.length > 0) {
+        const materialRows = room.materials.map(material => [
+          material.name,
+          `${material.quantity} ${material.unit}`,
+          `${material.price.toLocaleString('ru-RU', { minimumFractionDigits: 2 })} ₽`,
+          `${(material.quantity * material.price).toLocaleString('ru-RU', { minimumFractionDigits: 2 })} ₽`
+        ]);
+        
+        autoTable(doc, {
+          startY: yPosition,
+          head: [['Материал', 'Количество', 'Цена', 'Сумма']],
+          body: materialRows,
+          theme: 'grid',
+          headStyles: { fillColor: [34, 197, 94], font: 'DejaVuSans' },
+          bodyStyles: { font: 'DejaVuSans' },
+          styles: { fontSize: 9 }
+        });
+        
+        yPosition = (doc as any).lastAutoTable.finalY + 5;
+      }
+      
+      doc.setFontSize(11);
+      doc.setFont('DejaVuSans', 'bold');
+      doc.text(
+        `Итого по помещению: ${calculateRoomTotal(room).toLocaleString('ru-RU', { minimumFractionDigits: 2 })} ₽`,
+        14,
+        yPosition
+      );
+      yPosition += 10;
+    });
+    
+    if (yPosition > 260) {
+      doc.addPage();
+      yPosition = 20;
+    }
+    
+    doc.setFontSize(14);
+    doc.setFont('DejaVuSans', 'bold');
+    doc.text(
+      `ОБЩАЯ СУММА: ${calculateOfferTotal(offer).toLocaleString('ru-RU', { minimumFractionDigits: 2 })} ₽`,
+      14,
+      yPosition
+    );
+    
+    doc.save(`КП_${offer.address}_${offer.createdDate}.pdf`);
+    toast({ title: 'PDF создан', description: 'Коммерческое предложение экспортировано в PDF' });
+  };
+
+  const exportToExcel = (offer: CommercialOffer) => {
+    const workbook = XLSX.utils.book_new();
+    
+    const summaryData = [
+      ['КОММЕРЧЕСКОЕ ПРЕДЛОЖЕНИЕ'],
+      [],
+      ['Адрес:', offer.address],
+      ['Дата:', offer.createdDate],
+      [],
+      ['Помещение', 'Площадь пола, м²', 'Площадь стен, м²', 'Сумма, ₽']
+    ];
+    
+    offer.rooms.forEach(room => {
+      summaryData.push([
+        room.name,
+        room.area,
+        room.wallArea,
+        calculateRoomTotal(room).toFixed(2)
+      ]);
+    });
+    
+    summaryData.push([]);
+    summaryData.push(['ОБЩАЯ СУММА:', '', '', calculateOfferTotal(offer).toFixed(2)]);
+    
+    const summarySheet = XLSX.utils.aoa_to_sheet(summaryData);
+    XLSX.utils.book_append_sheet(workbook, summarySheet, 'Сводка');
+    
+    offer.rooms.forEach((room, index) => {
+      const roomData: any[][] = [
+        [`Помещение: ${room.name}`],
+        [`Площадь пола: ${room.area} м² | Площадь стен: ${room.wallArea} м²`],
+        [],
+        ['РАБОТЫ'],
+        ['Название', 'Количество', 'Ед. изм.', 'Цена, ₽', 'Сумма, ₽']
+      ];
+      
+      room.works.forEach(work => {
+        roomData.push([
+          work.name,
+          work.quantity,
+          work.unit,
+          work.price.toFixed(2),
+          (work.quantity * work.price).toFixed(2)
+        ]);
+      });
+      
+      const worksTotal = room.works.reduce((sum, work) => sum + (work.quantity * work.price), 0);
+      roomData.push(['', '', '', 'Итого работы:', worksTotal.toFixed(2)]);
+      
+      roomData.push([]);
+      roomData.push(['МАТЕРИАЛЫ']);
+      roomData.push(['Название', 'Количество', 'Ед. изм.', 'Цена, ₽', 'Сумма, ₽']);
+      
+      room.materials.forEach(material => {
+        roomData.push([
+          material.name,
+          material.quantity,
+          material.unit,
+          material.price.toFixed(2),
+          (material.quantity * material.price).toFixed(2)
+        ]);
+      });
+      
+      const materialsTotal = room.materials.reduce((sum, material) => sum + (material.quantity * material.price), 0);
+      roomData.push(['', '', '', 'Итого материалы:', materialsTotal.toFixed(2)]);
+      
+      roomData.push([]);
+      roomData.push(['', '', '', 'ИТОГО ПО ПОМЕЩЕНИЮ:', calculateRoomTotal(room).toFixed(2)]);
+      
+      const roomSheet = XLSX.utils.aoa_to_sheet(roomData);
+      XLSX.utils.book_append_sheet(workbook, roomSheet, `${index + 1}. ${room.name.substring(0, 25)}`);
+    });
+    
+    XLSX.writeFile(workbook, `КП_${offer.address}_${offer.createdDate}.xlsx`);
+    toast({ title: 'Excel создан', description: 'Коммерческое предложение экспортировано в Excel' });
+  };
+
   if (!user.subscriptionActive) {
     return (
       <div className="space-y-6">
@@ -195,7 +375,7 @@ export const CommercialOffers = ({ user }: CommercialOffersProps) => {
   if (currentOffer) {
     return (
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between flex-wrap gap-4">
           <div>
             <Button variant="ghost" onClick={() => setSelectedOffer(null)} className="mb-2">
               <Icon name="ArrowLeft" size={18} className="mr-2" />
@@ -209,6 +389,16 @@ export const CommercialOffers = ({ user }: CommercialOffersProps) => {
             <p className="text-3xl font-bold text-primary">
               {calculateOfferTotal(currentOffer).toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ₽
             </p>
+            <div className="flex gap-2 mt-3">
+              <Button variant="outline" size="sm" onClick={() => exportToPDF(currentOffer)}>
+                <Icon name="FileDown" size={16} className="mr-1" />
+                PDF
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => exportToExcel(currentOffer)}>
+                <Icon name="FileSpreadsheet" size={16} className="mr-1" />
+                Excel
+              </Button>
+            </div>
           </div>
         </div>
 
