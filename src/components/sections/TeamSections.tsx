@@ -264,9 +264,10 @@ export const renderTasks = (props: TeamSectionsProps) => {
   );
 };
 
-export const renderProfile = (user: any, handleLogout: () => void) => {
+export const renderProfile = (user: any, handleLogout: () => void, onUpdateUser?: (userData: any) => void) => {
   const getIndustryName = (industry: string) => {
     const industries: Record<string, string> = {
+      personal: 'Делаю ремонт для себя',
       construction: 'Строительство',
       renovation: 'Ремонт и отделка',
       engineering: 'Инженерные системы',
@@ -291,6 +292,21 @@ export const renderProfile = (user: any, handleLogout: () => void) => {
             <div className="flex-1">
               <h3 className="text-2xl font-semibold">{user.name}</h3>
               <p className="text-muted-foreground">{user.company}</p>
+              {user.accountType === 'business' && (
+                <div className="mt-2">
+                  {user.subscriptionActive ? (
+                    <Badge className="bg-green-500">
+                      <Icon name="Check" size={14} className="mr-1" />
+                      Подписка активна
+                    </Badge>
+                  ) : (
+                    <Badge variant="destructive">
+                      <Icon name="X" size={14} className="mr-1" />
+                      Подписка не активна
+                    </Badge>
+                  )}
+                </div>
+              )}
             </div>
             <Button variant="outline" onClick={handleLogout}>
               <Icon name="LogOut" size={18} className="mr-2" />
@@ -303,8 +319,10 @@ export const renderProfile = (user: any, handleLogout: () => void) => {
               <p className="text-muted-foreground">{user.phone}</p>
             </div>
             <div>
-              <label className="text-sm font-medium">Направление</label>
-              <p className="text-muted-foreground">{getIndustryName(user.industry)}</p>
+              <label className="text-sm font-medium">Тип аккаунта</label>
+              <p className="text-muted-foreground">
+                {user.accountType === 'personal' ? 'Личный ремонт' : 'Бизнес'}
+              </p>
             </div>
           </div>
           

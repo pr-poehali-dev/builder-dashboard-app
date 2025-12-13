@@ -35,13 +35,15 @@ export const AppHeader = ({ user, activeSection, setActiveSection, handleLogout 
               Объекты
             </Button>
             
-            <Button 
-              variant={activeSection === 'finances' ? 'default' : 'ghost'} 
-              onClick={() => setActiveSection('finances')}
-            >
-              <Icon name="DollarSign" size={18} className="mr-2" />
-              Финансы
-            </Button>
+            {user.accountType === 'business' && (
+              <Button 
+                variant={activeSection === 'finances' ? 'default' : 'ghost'} 
+                onClick={() => setActiveSection('finances')}
+              >
+                <Icon name="DollarSign" size={18} className="mr-2" />
+                Финансы
+              </Button>
+            )}
             
             <Button 
               variant={activeSection === 'employees' ? 'default' : 'ghost'} 
@@ -66,6 +68,16 @@ export const AppHeader = ({ user, activeSection, setActiveSection, handleLogout 
               <Icon name="User" size={18} className="mr-2" />
               Профиль
             </Button>
+            
+            {user.accountType === 'business' && (
+              <Button 
+                variant={activeSection === 'subscription' ? 'default' : 'ghost'} 
+                onClick={() => setActiveSection('subscription')}
+              >
+                <Icon name="CreditCard" size={18} className="mr-2" />
+                Подписка
+              </Button>
+            )}
             
             <Button 
               variant="ghost" 

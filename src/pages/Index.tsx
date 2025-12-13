@@ -14,6 +14,7 @@ const Index = () => {
 
   const state = useAppState();
   const handlers = useAppHandlers({
+    user: user || { accountType: 'personal', subscriptionActive: false },
     projects: state.projects,
     setProjects: state.setProjects,
     employees: state.employees,
@@ -77,6 +78,10 @@ const Index = () => {
       localStorage.setItem('currentUser', JSON.stringify(updatedUser));
       localStorage.setItem('user_' + user.phone, JSON.stringify(updatedUser));
     }
+  };
+
+  const handleUpdateUser = (userData: any) => {
+    setUser(userData);
   };
 
   const handleLogout = () => {
@@ -184,6 +189,7 @@ const Index = () => {
           activeSection={state.activeSection}
           user={user}
           handleLogout={handleLogout}
+          onUpdateUser={handleUpdateUser}
           sectionProps={sectionProps}
         />
       </div>

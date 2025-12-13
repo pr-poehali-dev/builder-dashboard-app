@@ -1,6 +1,8 @@
 import { useToast } from '@/hooks/use-toast';
+import { canAddItem } from '@/utils/accountLimits';
 
 interface UseAppHandlersProps {
+  user: any;
   projects: any[];
   setProjects: (projects: any[]) => void;
   employees: any[];
@@ -70,6 +72,24 @@ export const useAppHandlers = (props: UseAppHandlersProps) => {
 
   const handleAddProject = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    
+    const currentActiveProjects = props.projects.filter(p => !p.archived).length;
+    const check = canAddItem(
+      props.user.accountType,
+      props.user.subscriptionActive,
+      currentActiveProjects,
+      'projects'
+    );
+    
+    if (!check.allowed) {
+      toast({ 
+        title: 'Достигнут лимит', 
+        description: check.message,
+        variant: 'destructive' 
+      });
+      return;
+    }
+    
     const formData = new FormData(e.currentTarget);
     const newProject = {
       id: props.projects.length + 1,
@@ -115,6 +135,24 @@ export const useAppHandlers = (props: UseAppHandlersProps) => {
 
   const handleAddEmployee = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    
+    const currentActiveEmployees = props.employees.filter(emp => !emp.archived).length;
+    const check = canAddItem(
+      props.user.accountType,
+      props.user.subscriptionActive,
+      currentActiveEmployees,
+      'employees'
+    );
+    
+    if (!check.allowed) {
+      toast({ 
+        title: 'Достигнут лимит', 
+        description: check.message,
+        variant: 'destructive' 
+      });
+      return;
+    }
+    
     const formData = new FormData(e.currentTarget);
     const newEmployee = {
       id: props.employees.length + 1,

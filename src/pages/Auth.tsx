@@ -38,15 +38,21 @@ const Auth = ({ onLogin }: AuthProps) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     
+    const industry = formData.get('industry') as string;
+    const isPersonal = industry === 'personal';
+    
     const userData = {
       name: formData.get('name') as string,
       company: formData.get('company') as string,
       phone: formData.get('phone') as string,
-      industry: formData.get('industry') as string,
+      industry: industry,
       telegram: formData.get('telegram') as string || '',
       instagram: formData.get('instagram') as string || '',
       vk: formData.get('vk') as string || '',
       website: formData.get('website') as string || '',
+      accountType: isPersonal ? 'personal' : 'business',
+      subscriptionActive: isPersonal ? true : false,
+      subscriptionExpiry: isPersonal ? null : null,
       firstLogin: true
     };
 
@@ -138,6 +144,7 @@ const Auth = ({ onLogin }: AuthProps) => {
                     required
                   >
                     <option value="">Выберите направление</option>
+                    <option value="personal">Делаю ремонт для себя</option>
                     <option value="construction">Строительство</option>
                     <option value="renovation">Ремонт и отделка</option>
                     <option value="engineering">Инженерные системы</option>
