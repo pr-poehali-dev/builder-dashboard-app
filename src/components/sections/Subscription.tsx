@@ -54,7 +54,7 @@ export const Subscription = ({ user, onUpdateUser }: SubscriptionProps) => {
     <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-bold mb-2">Подписка</h2>
-        <p className="text-muted-foreground">Управление вашей подпиской на СтройКонтроль</p>
+        <p className="text-muted-foreground">Управление вашей подпиской на ПростоСтройка</p>
       </div>
 
       <Card className={`border-2 ${isExpired ? 'border-red-500' : isExpiringSoon ? 'border-yellow-500' : 'border-green-500'}`}>
