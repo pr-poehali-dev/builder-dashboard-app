@@ -38,14 +38,24 @@ export const AppHeader = ({ user, activeSection, setActiveSection, handleLogout 
             </Button>
             
             {user.accountType === 'business' && (
-              <Button 
-                variant={activeSection === 'finances' ? 'default' : 'ghost'} 
-                onClick={() => setActiveSection('finances')}
-                className="max-md:flex-row-reverse"
-              >
-                <Icon name="DollarSign" size={18} className="md:mr-2" />
-                <span className="max-md:hidden">Финансы</span>
-              </Button>
+              <>
+                <Button 
+                  variant={activeSection === 'finances' ? 'default' : 'ghost'} 
+                  onClick={() => setActiveSection('finances')}
+                  className="max-md:flex-row-reverse"
+                >
+                  <Icon name="DollarSign" size={18} className="md:mr-2" />
+                  <span className="max-md:hidden">Финансы</span>
+                </Button>
+                <Button 
+                  variant={activeSection === 'commercial' ? 'default' : 'ghost'} 
+                  onClick={() => setActiveSection('commercial')}
+                  className="max-md:flex-row-reverse"
+                >
+                  <Icon name="FileText" size={18} className="md:mr-2" />
+                  <span className="max-md:hidden">КП</span>
+                </Button>
+              </>
             )}
             
             <Button 

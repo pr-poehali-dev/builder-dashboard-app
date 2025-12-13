@@ -1,6 +1,7 @@
 import { renderDashboard, renderProjects, renderExpenses, renderFinances, renderProjectDetail } from '@/components/sections/ProjectSections';
 import { renderEmployees, renderTasks, renderProfile } from '@/components/sections/TeamSections';
 import { Subscription } from '@/components/sections/Subscription';
+import { CommercialOffers } from '@/components/sections/CommercialOffers';
 
 interface AppContentProps {
   activeSection: string;
@@ -22,6 +23,7 @@ export const AppContent = ({ activeSection, user, handleLogout, onUpdateUser, se
       {activeSection === 'tasks' && renderTasks(sectionProps)}
       {activeSection === 'profile' && renderProfile(user, handleLogout, onUpdateUser)}
       {activeSection === 'subscription' && <Subscription user={user} onUpdateUser={onUpdateUser} />}
+      {activeSection === 'commercial' && <CommercialOffers user={user} />}
     </main>
   );
 };
