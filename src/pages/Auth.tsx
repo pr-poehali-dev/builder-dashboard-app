@@ -12,6 +12,7 @@ interface AuthProps {
 
 const Auth = ({ onLogin }: AuthProps) => {
   const [isLogin, setIsLogin] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
   const { toast } = useToast();
 
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
@@ -19,12 +20,21 @@ const Auth = ({ onLogin }: AuthProps) => {
     const formData = new FormData(e.currentTarget);
     
     const phone = formData.get('phone') as string;
+    const password = formData.get('password') as string;
     
     const savedUser = localStorage.getItem('user_' + phone);
     if (savedUser) {
       const userData = JSON.parse(savedUser);
-      onLogin(userData);
-      toast({ title: 'Вход выполнен', description: `Добро пожаловать, ${userData.name}!` });
+      if (userData.password === password) {
+        onLogin(userData);
+        toast({ title: 'Вход выполнен', description: `Добро пожаловать, ${userData.name}!` });
+      } else {
+        toast({ 
+          title: 'Ошибка входа', 
+          description: 'Неверный пароль.',
+          variant: 'destructive'
+        });
+      }
     } else {
       toast({ 
         title: 'Ошибка входа', 
@@ -41,10 +51,32 @@ const Auth = ({ onLogin }: AuthProps) => {
     const industry = formData.get('industry') as string;
     const isPersonal = industry === 'personal';
     
+    const password = formData.get('password') as string;
+    const confirmPassword = formData.get('confirmPassword') as string;
+    
+    if (password !== confirmPassword) {
+      toast({ 
+        title: 'Ошибка регистрации', 
+        description: 'Пароли не совпадают.',
+        variant: 'destructive'
+      });
+      return;
+    }
+    
+    if (password.length < 6) {
+      toast({ 
+        title: 'Ошибка регистрации', 
+        description: 'Пароль должен содержать минимум 6 символов.',
+        variant: 'destructive'
+      });
+      return;
+    }
+    
     const userData = {
       name: formData.get('name') as string,
       company: formData.get('company') as string,
       phone: formData.get('phone') as string,
+      password: password,
       industry: industry,
       telegram: formData.get('telegram') as string || '',
       instagram: formData.get('instagram') as string || '',
@@ -87,6 +119,25 @@ const Auth = ({ onLogin }: AuthProps) => {
                   placeholder="+7 (999) 123-45-67" 
                   required 
                 />
+              </div>
+              <div>
+                <Label htmlFor="loginPassword">Пароль</Label>
+                <div className="relative">
+                  <Input 
+                    id="loginPassword" 
+                    name="password" 
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Введите пароль" 
+                    required 
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  >
+                    <Icon name={showPassword ? "EyeOff" : "Eye"} size={18} />
+                  </button>
+                </div>
               </div>
               <Button type="submit" className="w-full" size="lg">
                 Войти
@@ -152,6 +203,40 @@ const Auth = ({ onLogin }: AuthProps) => {
                     <option value="architecture">Архитектура и проектирование</option>
                     <option value="other">Другое</option>
                   </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="password">Пароль *</Label>
+                  <div className="relative">
+                    <Input 
+                      id="password" 
+                      name="password" 
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Минимум 6 символов" 
+                      minLength={6}
+                      required 
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    >
+                      <Icon name={showPassword ? "EyeOff" : "Eye"} size={18} />
+                    </button>
+                  </div>
+                </div>
+                <div>
+                  <Label htmlFor="confirmPassword">Подтвердите пароль *</Label>
+                  <Input 
+                    id="confirmPassword" 
+                    name="confirmPassword" 
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Повторите пароль" 
+                    minLength={6}
+                    required 
+                  />
                 </div>
               </div>
 
