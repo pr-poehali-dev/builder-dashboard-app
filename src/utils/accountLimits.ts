@@ -4,7 +4,12 @@ export const ACCOUNT_LIMITS = {
     maxEmployees: 10,
     hasCompanyFinances: false
   },
-  business: {
+  businessFree: {
+    maxProjects: 1,
+    maxEmployees: 10,
+    hasCompanyFinances: true
+  },
+  businessPaid: {
     maxProjects: Infinity,
     maxEmployees: Infinity,
     hasCompanyFinances: true
@@ -23,13 +28,19 @@ export const checkAccountLimit = (user: any, limitType: 'projects' | 'employees'
   return true;
 };
 
-export const getMaxLimit = (accountType: 'personal' | 'business', limitType: 'projects' | 'employees'): number => {
-  if (limitType === 'projects') {
-    return accountType === 'personal' ? ACCOUNT_LIMITS.personal.maxProjects : ACCOUNT_LIMITS.business.maxProjects;
+export const getMaxLimit = (accountType: 'personal' | 'business', subscriptionActive: boolean, limitType: 'projects' | 'employees'): number => {
+  if (accountType === 'personal') {
+    return limitType === 'projects' ? ACCOUNT_LIMITS.personal.maxProjects : ACCOUNT_LIMITS.personal.maxEmployees;
   }
-  if (limitType === 'employees') {
-    return accountType === 'personal' ? ACCOUNT_LIMITS.personal.maxEmployees : ACCOUNT_LIMITS.business.maxEmployees;
+  
+  if (accountType === 'business') {
+    if (subscriptionActive) {
+      return limitType === 'projects' ? ACCOUNT_LIMITS.businessPaid.maxProjects : ACCOUNT_LIMITS.businessPaid.maxEmployees;
+    } else {
+      return limitType === 'projects' ? ACCOUNT_LIMITS.businessFree.maxProjects : ACCOUNT_LIMITS.businessFree.maxEmployees;
+    }
   }
+  
   return 0;
 };
 
@@ -39,9 +50,10 @@ export const canAddItem = (
   currentCount: number,
   limitType: 'projects' | 'employees'
 ): { allowed: boolean; message: string } => {
-  if (accountType === 'personal') {
-    const limit = getMaxLimit('personal', limitType);
-    if (currentCount >= limit) {
+  const limit = getMaxLimit(accountType, subscriptionActive, limitType);
+  
+  if (currentCount >= limit) {
+    if (accountType === 'personal') {
       return {
         allowed: false,
         message: limitType === 'projects' 
@@ -49,14 +61,15 @@ export const canAddItem = (
           : 'Достигнут лимит в 10 сотрудников для личного аккаунта. Перейдите на бизнес-аккаунт для неограниченного количества.'
       };
     }
-    return { allowed: true, message: '' };
-  }
-  
-  if (accountType === 'business' && !subscriptionActive) {
-    return {
-      allowed: false,
-      message: 'Подписка не активна. Оплатите подписку для продолжения работы.'
-    };
+    
+    if (accountType === 'business' && !subscriptionActive) {
+      return {
+        allowed: false,
+        message: limitType === 'projects'
+          ? 'Бесплатный тариф поддерживает только 1 объект. Оплатите подписку для неограниченного количества объектов.'
+          : 'Достигнут лимит в 10 сотрудников. Оплатите подписку для неограниченного количества сотрудников.'
+      };
+    }
   }
   
   return { allowed: true, message: '' };

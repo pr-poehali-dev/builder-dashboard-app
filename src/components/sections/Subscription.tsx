@@ -85,60 +85,92 @@ export const Subscription = ({ user, onUpdateUser }: SubscriptionProps) => {
         </CardHeader>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Тарифный план</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between p-4 border rounded-lg">
-            <div className="flex items-center gap-4">
-              <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
-                <Icon name="CreditCard" size={24} className="text-primary" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-lg">Месячная подписка</h3>
-                <p className="text-sm text-muted-foreground">Полный доступ ко всем функциям</p>
-              </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Card className={!user.subscriptionActive ? 'border-2 border-primary' : ''}>
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between">
+              Бесплатный тариф
+              {!user.subscriptionActive && <Badge>Текущий</Badge>}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="text-center py-4">
+              <p className="text-4xl font-bold">0 ₽</p>
+              <p className="text-sm text-muted-foreground">навсегда</p>
             </div>
-            <div className="text-right">
-              <p className="text-3xl font-bold">799 ₽</p>
+
+            <div className="space-y-2">
+              <ul className="space-y-2">
+                <li className="flex items-center gap-2 text-sm">
+                  <Icon name="Check" size={16} className="text-green-500" />
+                  1 объект
+                </li>
+                <li className="flex items-center gap-2 text-sm">
+                  <Icon name="Check" size={16} className="text-green-500" />
+                  До 10 сотрудников
+                </li>
+                <li className="flex items-center gap-2 text-sm">
+                  <Icon name="Check" size={16} className="text-green-500" />
+                  Учёт финансов компании
+                </li>
+                <li className="flex items-center gap-2 text-sm">
+                  <Icon name="Check" size={16} className="text-green-500" />
+                  Управление задачами
+                </li>
+                <li className="flex items-center gap-2 text-sm">
+                  <Icon name="Check" size={16} className="text-green-500" />
+                  Прикрепление чеков
+                </li>
+              </ul>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className={user.subscriptionActive ? 'border-2 border-primary' : ''}>
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between">
+              Платный тариф
+              {user.subscriptionActive && <Badge className="bg-green-500">Текущий</Badge>}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="text-center py-4">
+              <p className="text-4xl font-bold">799 ₽</p>
               <p className="text-sm text-muted-foreground">в месяц</p>
             </div>
-          </div>
 
-          <div className="space-y-2">
-            <h4 className="font-semibold">Включено в подписку:</h4>
-            <ul className="space-y-2">
-              <li className="flex items-center gap-2 text-sm">
-                <Icon name="Check" size={16} className="text-green-500" />
-                Неограниченное количество объектов
-              </li>
-              <li className="flex items-center gap-2 text-sm">
-                <Icon name="Check" size={16} className="text-green-500" />
-                Неограниченное количество сотрудников
-              </li>
-              <li className="flex items-center gap-2 text-sm">
-                <Icon name="Check" size={16} className="text-green-500" />
-                Учёт финансов компании
-              </li>
-              <li className="flex items-center gap-2 text-sm">
-                <Icon name="Check" size={16} className="text-green-500" />
-                Управление задачами
-              </li>
-              <li className="flex items-center gap-2 text-sm">
-                <Icon name="Check" size={16} className="text-green-500" />
-                Прикрепление чеков и документов
-              </li>
-            </ul>
-          </div>
+            <div className="space-y-2">
+              <ul className="space-y-2">
+                <li className="flex items-center gap-2 text-sm">
+                  <Icon name="Check" size={16} className="text-green-500" />
+                  <span className="font-semibold">Неограниченное</span> количество объектов
+                </li>
+                <li className="flex items-center gap-2 text-sm">
+                  <Icon name="Check" size={16} className="text-green-500" />
+                  <span className="font-semibold">Неограниченное</span> количество сотрудников
+                </li>
+                <li className="flex items-center gap-2 text-sm">
+                  <Icon name="Check" size={16} className="text-green-500" />
+                  Учёт финансов компании
+                </li>
+                <li className="flex items-center gap-2 text-sm">
+                  <Icon name="Check" size={16} className="text-green-500" />
+                  Управление задачами
+                </li>
+                <li className="flex items-center gap-2 text-sm">
+                  <Icon name="Check" size={16} className="text-green-500" />
+                  Прикрепление чеков
+                </li>
+              </ul>
+            </div>
 
-          <Dialog open={isPaymentDialogOpen} onOpenChange={setIsPaymentDialogOpen}>
-            <DialogTrigger asChild>
-              <Button className="w-full" size="lg">
-                <Icon name="CreditCard" size={18} className="mr-2" />
-                {user.subscriptionActive && !isExpired ? 'Продлить подписку' : 'Оплатить подписку'}
-              </Button>
-            </DialogTrigger>
+            <Dialog open={isPaymentDialogOpen} onOpenChange={setIsPaymentDialogOpen}>
+              <DialogTrigger asChild>
+                <Button className="w-full" size="lg">
+                  <Icon name="CreditCard" size={18} className="mr-2" />
+                  {user.subscriptionActive && !isExpired ? 'Продлить подписку' : 'Перейти на платный'}
+                </Button>
+              </DialogTrigger>
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Оплата подписки</DialogTitle>
@@ -169,8 +201,9 @@ export const Subscription = ({ user, onUpdateUser }: SubscriptionProps) => {
               </form>
             </DialogContent>
           </Dialog>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
 
       <Card className="bg-muted/50">
         <CardContent className="pt-6">
