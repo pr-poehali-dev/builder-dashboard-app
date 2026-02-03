@@ -90,7 +90,7 @@ const Auth = ({ onLogin }: AuthProps) => {
 
     localStorage.setItem('user_' + userData.phone, JSON.stringify(userData));
     onLogin(userData);
-    toast({ title: 'Регистрация успешна', description: `Добро пожаловать в ПростоСтройка, ${userData.name}!` });
+    toast({ title: 'Регистрация успешна', description: `Добро пожаловать в Стройка Онлайн, ${userData.name}!` });
   };
 
   return (
@@ -102,7 +102,7 @@ const Auth = ({ onLogin }: AuthProps) => {
               <Icon name="Building2" size={32} className="text-white" />
             </div>
           </div>
-          <CardTitle className="text-3xl font-bold">ПростоСтройка</CardTitle>
+          <CardTitle className="text-3xl font-bold">Стройка Онлайн</CardTitle>
           <CardDescription className="text-base">
             {isLogin ? 'Войдите в свой аккаунт' : 'Создайте аккаунт для управления объектами'}
           </CardDescription>
