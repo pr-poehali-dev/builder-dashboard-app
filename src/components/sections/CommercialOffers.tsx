@@ -55,7 +55,67 @@ export const CommercialOffers = ({ user }: CommercialOffersProps) => {
   const [isRoomDialogOpen, setIsRoomDialogOpen] = useState(false);
   const [isWorkDialogOpen, setIsWorkDialogOpen] = useState(false);
   const [isMaterialDialogOpen, setIsMaterialDialogOpen] = useState(false);
+  const [selectedWorkTemplate, setSelectedWorkTemplate] = useState('');
   const { toast } = useToast();
+
+  const workTemplates = [
+    { name: 'Штукатурка стен', unit: 'м2' as const, price: 450 },
+    { name: 'Шпаклевка стен под покраску', unit: 'м2' as const, price: 350 },
+    { name: 'Поклейка обоев', unit: 'м2' as const, price: 250 },
+    { name: 'Укладка плитки на пол', unit: 'м2' as const, price: 800 },
+    { name: 'Укладка плитки на стены', unit: 'м2' as const, price: 900 },
+    { name: 'Укладка ламината', unit: 'м2' as const, price: 400 },
+    { name: 'Монтаж натяжного потолка', unit: 'м2' as const, price: 550 },
+    { name: 'Окраска стен', unit: 'м2' as const, price: 300 },
+    { name: 'Окраска потолка', unit: 'м2' as const, price: 280 },
+    { name: 'Устройство стяжки пола', unit: 'м2' as const, price: 500 },
+    { name: 'Гидроизоляция пола', unit: 'м2' as const, price: 350 },
+    { name: 'Монтаж гипсокартона на стены', unit: 'м2' as const, price: 450 },
+    { name: 'Монтаж гипсокартона на потолок', unit: 'м2' as const, price: 500 },
+    { name: 'Устройство перегородки', unit: 'м2' as const, price: 1200 },
+    { name: 'Установка двери межкомнатной', unit: 'шт' as const, price: 3500 },
+    { name: 'Установка двери входной', unit: 'шт' as const, price: 5000 },
+    { name: 'Монтаж плинтуса', unit: 'мп' as const, price: 150 },
+    { name: 'Монтаж карниза потолочного', unit: 'мп' as const, price: 200 },
+    { name: 'Электромонтажные работы', unit: 'шт' as const, price: 800 },
+    { name: 'Монтаж розетки/выключателя', unit: 'шт' as const, price: 500 },
+    { name: 'Монтаж светильника', unit: 'шт' as const, price: 600 },
+    { name: 'Прокладка кабеля', unit: 'мп' as const, price: 250 },
+    { name: 'Сантехнические работы', unit: 'шт' as const, price: 1500 },
+    { name: 'Установка унитаза', unit: 'шт' as const, price: 2500 },
+    { name: 'Установка раковины', unit: 'шт' as const, price: 2000 },
+    { name: 'Установка ванны', unit: 'шт' as const, price: 4000 },
+    { name: 'Установка душевой кабины', unit: 'шт' as const, price: 5000 },
+    { name: 'Установка смесителя', unit: 'шт' as const, price: 1500 },
+    { name: 'Установка полотенцесушителя', unit: 'шт' as const, price: 2000 },
+    { name: 'Прокладка труб водоснабжения', unit: 'мп' as const, price: 400 },
+    { name: 'Прокладка канализации', unit: 'мп' as const, price: 450 },
+    { name: 'Демонтаж стяжки', unit: 'м2' as const, price: 300 },
+    { name: 'Демонтаж плитки', unit: 'м2' as const, price: 250 },
+    { name: 'Демонтаж перегородок', unit: 'м2' as const, price: 400 },
+    { name: 'Вывоз мусора', unit: 'м2' as const, price: 100 },
+  ];
+
+  const handleWorkTemplateChange = (value: string) => {
+    setSelectedWorkTemplate(value);
+    if (value && value !== 'custom') {
+      const template = workTemplates.find(t => t.name === value);
+      if (template) {
+        const form = document.getElementById('workForm') as HTMLFormElement;
+        if (form) {
+          (form.elements.namedItem('name') as HTMLInputElement).value = template.name;
+          (form.elements.namedItem('price') as HTMLInputElement).value = template.price.toString();
+          (form.elements.namedItem('unit') as HTMLSelectElement).value = template.unit;
+        }
+      }
+    } else if (value === 'custom') {
+      const form = document.getElementById('workForm') as HTMLFormElement;
+      if (form) {
+        (form.elements.namedItem('name') as HTMLInputElement).value = '';
+        (form.elements.namedItem('price') as HTMLInputElement).value = '';
+      }
+    }
+  };
 
   const handleAddOffer = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -448,7 +508,68 @@ export const CommercialOffers = ({ user }: CommercialOffersProps) => {
                         <DialogHeader>
                           <DialogTitle>Добавить работу</DialogTitle>
                         </DialogHeader>
-                        <form onSubmit={handleAddWork} className="space-y-4">
+                        <form id="workForm" onSubmit={handleAddWork} className="space-y-4">
+                          <div>
+                            <Label htmlFor="workTemplate">Выбрать из списка</Label>
+                            <select 
+                              id="workTemplate" 
+                              className="w-full border rounded-lg px-3 py-2 text-sm"
+                              value={selectedWorkTemplate}
+                              onChange={(e) => handleWorkTemplateChange(e.target.value)}
+                            >
+                              <option value="">Выберите типовую работу</option>
+                              <optgroup label="Отделочные работы">
+                                <option value="Штукатурка стен">Штукатурка стен</option>
+                                <option value="Шпаклевка стен под покраску">Шпаклевка стен под покраску</option>
+                                <option value="Поклейка обоев">Поклейка обоев</option>
+                                <option value="Окраска стен">Окраска стен</option>
+                                <option value="Окраска потолка">Окраска потолка</option>
+                              </optgroup>
+                              <optgroup label="Полы и потолки">
+                                <option value="Укладка плитки на пол">Укладка плитки на пол</option>
+                                <option value="Укладка плитки на стены">Укладка плитки на стены</option>
+                                <option value="Укладка ламината">Укладка ламината</option>
+                                <option value="Монтаж натяжного потолка">Монтаж натяжного потолка</option>
+                                <option value="Устройство стяжки пола">Устройство стяжки пола</option>
+                                <option value="Гидроизоляция пола">Гидроизоляция пола</option>
+                              </optgroup>
+                              <optgroup label="Гипсокартон">
+                                <option value="Монтаж гипсокартона на стены">Монтаж гипсокартона на стены</option>
+                                <option value="Монтаж гипсокартона на потолок">Монтаж гипсокартона на потолок</option>
+                                <option value="Устройство перегородки">Устройство перегородки</option>
+                              </optgroup>
+                              <optgroup label="Двери и декор">
+                                <option value="Установка двери межкомнатной">Установка двери межкомнатной</option>
+                                <option value="Установка двери входной">Установка двери входной</option>
+                                <option value="Монтаж плинтуса">Монтаж плинтуса</option>
+                                <option value="Монтаж карниза потолочного">Монтаж карниза потолочного</option>
+                              </optgroup>
+                              <optgroup label="Электрика">
+                                <option value="Электромонтажные работы">Электромонтажные работы</option>
+                                <option value="Монтаж розетки/выключателя">Монтаж розетки/выключателя</option>
+                                <option value="Монтаж светильника">Монтаж светильника</option>
+                                <option value="Прокладка кабеля">Прокладка кабеля</option>
+                              </optgroup>
+                              <optgroup label="Сантехника">
+                                <option value="Сантехнические работы">Сантехнические работы</option>
+                                <option value="Установка унитаза">Установка унитаза</option>
+                                <option value="Установка раковины">Установка раковины</option>
+                                <option value="Установка ванны">Установка ванны</option>
+                                <option value="Установка душевой кабины">Установка душевой кабины</option>
+                                <option value="Установка смесителя">Установка смесителя</option>
+                                <option value="Установка полотенцесушителя">Установка полотенцесушителя</option>
+                                <option value="Прокладка труб водоснабжения">Прокладка труб водоснабжения</option>
+                                <option value="Прокладка канализации">Прокладка канализации</option>
+                              </optgroup>
+                              <optgroup label="Демонтаж">
+                                <option value="Демонтаж стяжки">Демонтаж стяжки</option>
+                                <option value="Демонтаж плитки">Демонтаж плитки</option>
+                                <option value="Демонтаж перегородок">Демонтаж перегородок</option>
+                                <option value="Вывоз мусора">Вывоз мусора</option>
+                              </optgroup>
+                              <option value="custom">➕ Своя работа</option>
+                            </select>
+                          </div>
                           <div>
                             <Label htmlFor="workName">Название работы *</Label>
                             <Input id="workName" name="name" placeholder="Штукатурка стен" required />
