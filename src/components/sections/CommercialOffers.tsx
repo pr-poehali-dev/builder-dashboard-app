@@ -56,6 +56,7 @@ export const CommercialOffers = ({ user }: CommercialOffersProps) => {
   const [isWorkDialogOpen, setIsWorkDialogOpen] = useState(false);
   const [isMaterialDialogOpen, setIsMaterialDialogOpen] = useState(false);
   const [selectedWorkTemplate, setSelectedWorkTemplate] = useState('');
+  const [selectedMaterialTemplate, setSelectedMaterialTemplate] = useState('');
   const { toast } = useToast();
 
   const workTemplates = [
@@ -96,6 +97,57 @@ export const CommercialOffers = ({ user }: CommercialOffersProps) => {
     { name: 'Вывоз мусора', unit: 'м2' as const, price: 100 },
   ];
 
+  const materialTemplates = [
+    { name: 'Штукатурка Кнауф Ротбанд', unit: 'упаковок' as const, price: 450 },
+    { name: 'Шпаклевка финишная', unit: 'упаковок' as const, price: 380 },
+    { name: 'Грунтовка глубокого проникновения', unit: 'шт' as const, price: 250 },
+    { name: 'Обои флизелиновые', unit: 'шт' as const, price: 1200 },
+    { name: 'Клей для обоев', unit: 'упаковок' as const, price: 320 },
+    { name: 'Плитка керамическая напольная', unit: 'м2' as const, price: 800 },
+    { name: 'Плитка керамическая настенная', unit: 'м2' as const, price: 900 },
+    { name: 'Клей для плитки', unit: 'упаковок' as const, price: 350 },
+    { name: 'Затирка для швов', unit: 'кг' as const, price: 280 },
+    { name: 'Ламинат 33 класс', unit: 'м2' as const, price: 950 },
+    { name: 'Подложка под ламинат', unit: 'м2' as const, price: 120 },
+    { name: 'Плинтус МДФ', unit: 'мп' as const, price: 180 },
+    { name: 'Краска водоэмульсионная', unit: 'шт' as const, price: 1800 },
+    { name: 'Краска акриловая', unit: 'шт' as const, price: 2200 },
+    { name: 'Гипсокартон ГКЛ 12.5 мм', unit: 'шт' as const, price: 380 },
+    { name: 'Гипсокартон влагостойкий ГКЛВ', unit: 'шт' as const, price: 450 },
+    { name: 'Профиль направляющий ПН', unit: 'мп' as const, price: 85 },
+    { name: 'Профиль стоечный ПС', unit: 'мп' as const, price: 95 },
+    { name: 'Саморезы по металлу', unit: 'упаковок' as const, price: 120 },
+    { name: 'Дюбель-гвозди', unit: 'упаковок' as const, price: 150 },
+    { name: 'Серпянка', unit: 'шт' as const, price: 80 },
+    { name: 'Угол перфорированный', unit: 'мп' as const, price: 45 },
+    { name: 'Дверь межкомнатная', unit: 'шт' as const, price: 8500 },
+    { name: 'Дверь входная металлическая', unit: 'шт' as const, price: 18000 },
+    { name: 'Фурнитура дверная', unit: 'шт' as const, price: 1200 },
+    { name: 'Кабель ВВГнг 3х2.5', unit: 'мп' as const, price: 85 },
+    { name: 'Кабель ВВГнг 3х1.5', unit: 'мп' as const, price: 65 },
+    { name: 'Розетка', unit: 'шт' as const, price: 280 },
+    { name: 'Выключатель', unit: 'шт' as const, price: 250 },
+    { name: 'Распределительная коробка', unit: 'шт' as const, price: 120 },
+    { name: 'Светильник потолочный', unit: 'шт' as const, price: 1800 },
+    { name: 'Труба полипропиленовая PN20', unit: 'мп' as const, price: 180 },
+    { name: 'Труба канализационная 50мм', unit: 'мп' as const, price: 220 },
+    { name: 'Труба канализационная 110мм', unit: 'мп' as const, price: 380 },
+    { name: 'Фитинги для труб', unit: 'шт' as const, price: 95 },
+    { name: 'Унитаз', unit: 'шт' as const, price: 8500 },
+    { name: 'Раковина', unit: 'шт' as const, price: 4500 },
+    { name: 'Ванна акриловая', unit: 'шт' as const, price: 15000 },
+    { name: 'Душевая кабина', unit: 'шт' as const, price: 22000 },
+    { name: 'Смеситель для раковины', unit: 'шт' as const, price: 3500 },
+    { name: 'Смеситель для ванны', unit: 'шт' as const, price: 4200 },
+    { name: 'Полотенцесушитель', unit: 'шт' as const, price: 5500 },
+    { name: 'Сифон для раковины', unit: 'шт' as const, price: 450 },
+    { name: 'Гофра для унитаза', unit: 'шт' as const, price: 280 },
+    { name: 'Цемент М500', unit: 'упаковок' as const, price: 380 },
+    { name: 'Песок строительный', unit: 'кг' as const, price: 15 },
+    { name: 'Пескобетон М300', unit: 'упаковок' as const, price: 220 },
+    { name: 'Гидроизоляция обмазочная', unit: 'шт' as const, price: 1800 },
+  ];
+
   const handleWorkTemplateChange = (value: string) => {
     setSelectedWorkTemplate(value);
     if (value && value !== 'custom') {
@@ -110,6 +162,27 @@ export const CommercialOffers = ({ user }: CommercialOffersProps) => {
       }
     } else if (value === 'custom') {
       const form = document.getElementById('workForm') as HTMLFormElement;
+      if (form) {
+        (form.elements.namedItem('name') as HTMLInputElement).value = '';
+        (form.elements.namedItem('price') as HTMLInputElement).value = '';
+      }
+    }
+  };
+
+  const handleMaterialTemplateChange = (value: string) => {
+    setSelectedMaterialTemplate(value);
+    if (value && value !== 'custom') {
+      const template = materialTemplates.find(t => t.name === value);
+      if (template) {
+        const form = document.getElementById('materialForm') as HTMLFormElement;
+        if (form) {
+          (form.elements.namedItem('name') as HTMLInputElement).value = template.name;
+          (form.elements.namedItem('price') as HTMLInputElement).value = template.price.toString();
+          (form.elements.namedItem('unit') as HTMLSelectElement).value = template.unit;
+        }
+      }
+    } else if (value === 'custom') {
+      const form = document.getElementById('materialForm') as HTMLFormElement;
       if (form) {
         (form.elements.namedItem('name') as HTMLInputElement).value = '';
         (form.elements.namedItem('price') as HTMLInputElement).value = '';
@@ -639,7 +712,85 @@ export const CommercialOffers = ({ user }: CommercialOffersProps) => {
                         <DialogHeader>
                           <DialogTitle>Добавить материал</DialogTitle>
                         </DialogHeader>
-                        <form onSubmit={handleAddMaterial} className="space-y-4">
+                        <form id="materialForm" onSubmit={handleAddMaterial} className="space-y-4">
+                          <div>
+                            <Label htmlFor="materialTemplate">Выбрать из списка</Label>
+                            <select 
+                              id="materialTemplate" 
+                              className="w-full border rounded-lg px-3 py-2 text-sm"
+                              value={selectedMaterialTemplate}
+                              onChange={(e) => handleMaterialTemplateChange(e.target.value)}
+                            >
+                              <option value="">Выберите типовой материал</option>
+                              <optgroup label="Штукатурка и шпаклевка">
+                                <option value="Штукатурка Кнауф Ротбанд">Штукатурка Кнауф Ротбанд</option>
+                                <option value="Шпаклевка финишная">Шпаклевка финишная</option>
+                                <option value="Грунтовка глубокого проникновения">Грунтовка глубокого проникновения</option>
+                              </optgroup>
+                              <optgroup label="Обои и краски">
+                                <option value="Обои флизелиновые">Обои флизелиновые</option>
+                                <option value="Клей для обоев">Клей для обоев</option>
+                                <option value="Краска водоэмульсионная">Краска водоэмульсионная</option>
+                                <option value="Краска акриловая">Краска акриловая</option>
+                              </optgroup>
+                              <optgroup label="Плитка">
+                                <option value="Плитка керамическая напольная">Плитка керамическая напольная</option>
+                                <option value="Плитка керамическая настенная">Плитка керамическая настенная</option>
+                                <option value="Клей для плитки">Клей для плитки</option>
+                                <option value="Затирка для швов">Затирка для швов</option>
+                              </optgroup>
+                              <optgroup label="Напольные покрытия">
+                                <option value="Ламинат 33 класс">Ламинат 33 класс</option>
+                                <option value="Подложка под ламинат">Подложка под ламинат</option>
+                                <option value="Плинтус МДФ">Плинтус МДФ</option>
+                              </optgroup>
+                              <optgroup label="Гипсокартон">
+                                <option value="Гипсокартон ГКЛ 12.5 мм">Гипсокартон ГКЛ 12.5 мм</option>
+                                <option value="Гипсокартон влагостойкий ГКЛВ">Гипсокартон влагостойкий ГКЛВ</option>
+                                <option value="Профиль направляющий ПН">Профиль направляющий ПН</option>
+                                <option value="Профиль стоечный ПС">Профиль стоечный ПС</option>
+                                <option value="Саморезы по металлу">Саморезы по металлу</option>
+                                <option value="Дюбель-гвозди">Дюбель-гвозди</option>
+                                <option value="Серпянка">Серпянка</option>
+                                <option value="Угол перфорированный">Угол перфорированный</option>
+                              </optgroup>
+                              <optgroup label="Двери">
+                                <option value="Дверь межкомнатная">Дверь межкомнатная</option>
+                                <option value="Дверь входная металлическая">Дверь входная металлическая</option>
+                                <option value="Фурнитура дверная">Фурнитура дверная</option>
+                              </optgroup>
+                              <optgroup label="Электрика">
+                                <option value="Кабель ВВГнг 3х2.5">Кабель ВВГнг 3х2.5</option>
+                                <option value="Кабель ВВГнг 3х1.5">Кабель ВВГнг 3х1.5</option>
+                                <option value="Розетка">Розетка</option>
+                                <option value="Выключатель">Выключатель</option>
+                                <option value="Распределительная коробка">Распределительная коробка</option>
+                                <option value="Светильник потолочный">Светильник потолочный</option>
+                              </optgroup>
+                              <optgroup label="Сантехника">
+                                <option value="Труба полипропиленовая PN20">Труба полипропиленовая PN20</option>
+                                <option value="Труба канализационная 50мм">Труба канализационная 50мм</option>
+                                <option value="Труба канализационная 110мм">Труба канализационная 110мм</option>
+                                <option value="Фитинги для труб">Фитинги для труб</option>
+                                <option value="Унитаз">Унитаз</option>
+                                <option value="Раковина">Раковина</option>
+                                <option value="Ванна акриловая">Ванна акриловая</option>
+                                <option value="Душевая кабина">Душевая кабина</option>
+                                <option value="Смеситель для раковины">Смеситель для раковины</option>
+                                <option value="Смеситель для ванны">Смеситель для ванны</option>
+                                <option value="Полотенцесушитель">Полотенцесушитель</option>
+                                <option value="Сифон для раковины">Сифон для раковины</option>
+                                <option value="Гофра для унитаза">Гофра для унитаза</option>
+                              </optgroup>
+                              <optgroup label="Стройматериалы">
+                                <option value="Цемент М500">Цемент М500</option>
+                                <option value="Песок строительный">Песок строительный</option>
+                                <option value="Пескобетон М300">Пескобетон М300</option>
+                                <option value="Гидроизоляция обмазочная">Гидроизоляция обмазочная</option>
+                              </optgroup>
+                              <option value="custom">➕ Свой материал</option>
+                            </select>
+                          </div>
                           <div>
                             <Label htmlFor="materialName">Название материала *</Label>
                             <Input id="materialName" name="name" placeholder="Штукатурка Кнауф" required />
