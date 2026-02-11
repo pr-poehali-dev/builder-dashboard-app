@@ -115,6 +115,77 @@ const Landing = ({ onGetStarted }: LandingProps) => {
           </div>
         </div>
 
+        <div className="bg-gradient-to-br from-primary/10 to-secondary/10 rounded-2xl p-8 sm:p-12 shadow-xl max-w-5xl mx-auto mb-12">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-3 text-center">Дорожная карта развития</h2>
+          <p className="text-center text-muted-foreground mb-10">Мы превращаем сервис в полноценную экосистему для строительной отрасли</p>
+          
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="bg-white rounded-xl p-6 shadow-md relative">
+              <div className="absolute -top-3 -left-3 h-10 w-10 rounded-full bg-primary flex items-center justify-center text-white font-bold shadow-lg">
+                1
+              </div>
+              <div className="flex items-center gap-3 mb-3 mt-2">
+                <Icon name="LayoutDashboard" size={28} className="text-primary" />
+                <h3 className="text-xl font-bold">Личный кабинет</h3>
+              </div>
+              <p className="text-muted-foreground text-sm leading-relaxed">
+                Управление проектами, сотрудниками, задачами и финансами. Создание КП, контроль бюджетов и отчётность по объектам.
+              </p>
+              <div className="mt-3 inline-block px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">
+                Готово
+              </div>
+            </div>
+
+            <div className="bg-white rounded-xl p-6 shadow-md relative">
+              <div className="absolute -top-3 -left-3 h-10 w-10 rounded-full bg-secondary flex items-center justify-center text-white font-bold shadow-lg">
+                2
+              </div>
+              <div className="flex items-center gap-3 mb-3 mt-2">
+                <Icon name="Store" size={28} className="text-secondary" />
+                <h3 className="text-xl font-bold">Маркетплейс материалов</h3>
+              </div>
+              <p className="text-muted-foreground text-sm leading-relaxed">
+                Онлайн-каталог стройматериалов с ценами, характеристиками и возможностью заказа напрямую от поставщиков. Сравнение цен и быстрый поиск.
+              </p>
+              <div className="mt-3 inline-block px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full">
+                В разработке
+              </div>
+            </div>
+
+            <div className="bg-white rounded-xl p-6 shadow-md relative">
+              <div className="absolute -top-3 -left-3 h-10 w-10 rounded-full bg-accent flex items-center justify-center text-white font-bold shadow-lg">
+                3
+              </div>
+              <div className="flex items-center gap-3 mb-3 mt-2">
+                <Icon name="Handshake" size={28} className="text-accent" />
+                <h3 className="text-xl font-bold">Биржа заказов</h3>
+              </div>
+              <p className="text-muted-foreground text-sm leading-relaxed">
+                Платформа для поиска заказов и исполнителей. Заказчики публикуют задачи, строители откликаются. Рейтинги, отзывы и безопасные сделки.
+              </p>
+              <div className="mt-3 inline-block px-3 py-1 bg-purple-100 text-purple-700 text-xs font-semibold rounded-full">
+                Планируется
+              </div>
+            </div>
+
+            <div className="bg-white rounded-xl p-6 shadow-md relative">
+              <div className="absolute -top-3 -left-3 h-10 w-10 rounded-full bg-orange-500 flex items-center justify-center text-white font-bold shadow-lg">
+                4
+              </div>
+              <div className="flex items-center gap-3 mb-3 mt-2">
+                <Icon name="Network" size={28} className="text-orange-500" />
+                <h3 className="text-xl font-bold">Строительная соцсеть</h3>
+              </div>
+              <p className="text-muted-foreground text-sm leading-relaxed">
+                Профессиональное сообщество строителей. Портфолио проектов, обмен опытом, поиск партнёров и подрядчиков. Ваша репутация в отрасли.
+              </p>
+              <div className="mt-3 inline-block px-3 py-1 bg-orange-100 text-orange-700 text-xs font-semibold rounded-full">
+                Планируется
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div className="text-center">
           <Button 
             size="lg" 
