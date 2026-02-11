@@ -77,6 +77,15 @@ export const AppHeader = ({ user, activeSection, setActiveSection, handleLogout 
             </Button>
             
             <Button 
+              variant={activeSection === 'ideas' ? 'default' : 'ghost'} 
+              onClick={() => setActiveSection('ideas')}
+              className="max-md:flex-row-reverse"
+            >
+              <Icon name="Lightbulb" size={18} className="md:mr-2" />
+              <span className="max-md:hidden">Идеи</span>
+            </Button>
+
+            <Button 
               variant={activeSection === 'profile' ? 'default' : 'ghost'} 
               onClick={() => setActiveSection('profile')}
               className="max-md:flex-row-reverse"
