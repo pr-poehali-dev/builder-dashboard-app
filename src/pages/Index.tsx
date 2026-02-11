@@ -5,11 +5,13 @@ import { useAppHandlers } from '@/hooks/useAppHandlers';
 import { AppHeader } from '@/components/layout/AppHeader';
 import { AppContent } from '@/components/layout/AppContent';
 import Auth from './Auth';
+import Landing from './Landing';
 import Onboarding from '@/components/Onboarding';
 
 const Index = () => {
   const [user, setUser] = useState<any>(null);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showLanding, setShowLanding] = useState(true);
   const { toast } = useToast();
 
   const state = useAppState();
@@ -56,6 +58,7 @@ const Index = () => {
     if (currentUser) {
       const userData = JSON.parse(currentUser);
       setUser(userData);
+      setShowLanding(false);
       if (userData.firstLogin) {
         setShowOnboarding(true);
       }
@@ -64,6 +67,7 @@ const Index = () => {
 
   const handleLogin = (userData: any) => {
     setUser(userData);
+    setShowLanding(false);
     localStorage.setItem('currentUser', JSON.stringify(userData));
     if (userData.firstLogin) {
       setShowOnboarding(true);
@@ -90,8 +94,12 @@ const Index = () => {
     toast({ title: 'Выход выполнен', description: 'До скорой встречи!' });
   };
 
+  if (showLanding && !user) {
+    return <Landing onGetStarted={() => setShowLanding(false)} />;
+  }
+
   if (!user) {
-    return <Auth onLogin={handleLogin} />;
+    return <Auth onLogin={handleLogin} onBackToLanding={() => setShowLanding(true)} />;
   }
 
   const sectionProps = {

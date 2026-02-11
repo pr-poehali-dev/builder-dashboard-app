@@ -8,9 +8,10 @@ import { useToast } from '@/hooks/use-toast';
 
 interface AuthProps {
   onLogin: (userData: any) => void;
+  onBackToLanding?: () => void;
 }
 
-const Auth = ({ onLogin }: AuthProps) => {
+const Auth = ({ onLogin, onBackToLanding }: AuthProps) => {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const { toast } = useToast();
@@ -97,6 +98,15 @@ const Auth = ({ onLogin }: AuthProps) => {
     <div className="min-h-screen bg-gradient-to-br from-primary/10 via-background to-secondary/10 flex items-center justify-center p-4">
       <Card className="w-full max-w-2xl shadow-xl">
         <CardHeader className="text-center space-y-2">
+          {onBackToLanding && (
+            <button
+              onClick={onBackToLanding}
+              className="absolute top-4 left-4 text-muted-foreground hover:text-foreground flex items-center gap-1 text-sm"
+            >
+              <Icon name="ArrowLeft" size={16} />
+              Назад
+            </button>
+          )}
           <div className="flex justify-center mb-4">
             <div className="h-16 w-16 rounded-full bg-primary flex items-center justify-center">
               <Icon name="Building2" size={32} className="text-white" />
