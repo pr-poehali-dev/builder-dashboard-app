@@ -13,7 +13,7 @@ const Header = ({ onCallback }: HeaderProps) => {
     { label: 'Марки', href: '#brands' },
     { label: 'Услуги', href: '#services' },
     { label: 'Преимущества', href: '#advantages' },
-    { label: 'Галерея', href: '#gallery' },
+
     { label: 'Контакты', href: '#contacts' },
   ];
 
@@ -50,12 +50,8 @@ const Header = ({ onCallback }: HeaderProps) => {
           </nav>
 
           <div className="flex items-center gap-3">
-            <a href="tel:+74994604132" className="hidden sm:flex items-center gap-2 text-sm font-semibold text-foreground">
-              <Icon name="Phone" size={16} className="text-primary" />
-              +7 (499) 460-41-32
-            </a>
             <Button onClick={onCallback} size="sm" className="text-sm font-semibold">
-              Записаться
+              Оставить заявку
             </Button>
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -79,10 +75,7 @@ const Header = ({ onCallback }: HeaderProps) => {
                 {item.label}
               </button>
             ))}
-            <a href="tel:+74994604132" className="flex items-center gap-2 py-3 text-foreground font-semibold sm:hidden">
-              <Icon name="Phone" size={16} className="text-primary" />
-              +7 (499) 460-41-32
-            </a>
+
           </nav>
         </div>
       )}

@@ -46,8 +46,14 @@ const services = [
   {
     icon: 'Cpu',
     title: 'Обновление ПО',
-    description: 'Установка обновлений прошивок, активация функций, русификация, настройка параметров через OBD.',
+    description: 'Установка обновлений прошивок, активация скрытых функций, настройка параметров через OBD.',
     price: 'от 2 000 ₽',
+  },
+  {
+    icon: 'Languages',
+    title: 'Русификация',
+    description: 'Полная русификация меню, навигации, голосового ассистента и мультимедийной системы электромобиля.',
+    price: 'от 3 000 ₽',
   },
 ];
 
@@ -63,7 +69,7 @@ const Services = () => {
           </p>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {services.map((service) => (
             <div
               key={service.title}

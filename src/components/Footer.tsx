@@ -18,7 +18,7 @@ const Footer = () => {
               </div>
             </div>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Специализированный сервисный центр по обслуживанию и ремонту электромобилей в Москве.
+              Специализированный сервисный центр по обслуживанию и ремонту электромобилей в Казани.
             </p>
           </div>
 
@@ -29,6 +29,7 @@ const Footer = () => {
               <li><a href="#services" className="hover:text-primary transition-colors">Ремонт батареи</a></li>
               <li><a href="#services" className="hover:text-primary transition-colors">Обслуживание</a></li>
               <li><a href="#services" className="hover:text-primary transition-colors">Зарядные станции</a></li>
+              <li><a href="#services" className="hover:text-primary transition-colors">Русификация</a></li>
             </ul>
           </div>
 
@@ -46,16 +47,12 @@ const Footer = () => {
             <h4 className="text-sm font-bold uppercase tracking-wider mb-4">Контакты</h4>
             <ul className="space-y-3 text-sm text-muted-foreground">
               <li className="flex items-center gap-2">
-                <Icon name="Phone" size={14} className="text-primary" />
-                <a href="tel:+74994604132" className="hover:text-primary transition-colors">+7 (499) 460-41-32</a>
-              </li>
-              <li className="flex items-center gap-2">
                 <Icon name="Mail" size={14} className="text-primary" />
                 <a href="mailto:info@electroev.ru" className="hover:text-primary transition-colors">info@electroev.ru</a>
               </li>
               <li className="flex items-start gap-2">
                 <Icon name="MapPin" size={14} className="text-primary mt-0.5" />
-                <span>Москва, 3-я Мытищинская ул., 16, стр. 25</span>
+                <span>Казань, ул. Космонавтов, 73</span>
               </li>
             </ul>
           </div>

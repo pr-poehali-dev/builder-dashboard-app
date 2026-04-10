@@ -43,7 +43,7 @@ const Hero = ({ onCallback }: HeroProps) => {
               onClick={onCallback}
             >
               <Icon name="Calendar" size={20} className="mr-2" />
-              Записаться на сервис
+              Оставить заявку
             </Button>
             <Button
               variant="outline"

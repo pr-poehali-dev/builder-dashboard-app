@@ -17,21 +17,8 @@ const Contacts = () => {
               </div>
               <div>
                 <h3 className="text-base sm:text-lg font-bold mb-1">Адрес</h3>
-                <p className="text-sm sm:text-base text-muted-foreground">г. Москва, 3-я Мытищинская ул., 16, стр. 25</p>
+                <p className="text-sm sm:text-base text-muted-foreground">г. Казань, ул. Космонавтов, 73</p>
                 <p className="text-xs sm:text-sm text-muted-foreground mt-1">Удобный подъезд, бесплатная парковка</p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-4 sm:gap-5">
-              <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-                <Icon name="Phone" size={24} className="text-primary" />
-              </div>
-              <div>
-                <h3 className="text-base sm:text-lg font-bold mb-1">Телефон</h3>
-                <a href="tel:+74994604132" className="text-sm sm:text-base text-foreground hover:text-primary transition-colors font-semibold">
-                  +7 (499) 460-41-32
-                </a>
-                <p className="text-xs sm:text-sm text-muted-foreground mt-1">Ежедневно с 9:00 до 21:00</p>
               </div>
             </div>
 
@@ -74,18 +61,12 @@ const Contacts = () => {
               >
                 <Icon name="Send" size={20} className="text-muted-foreground" />
               </a>
-              <a
-                href="#"
-                className="h-11 w-11 rounded-xl bg-secondary flex items-center justify-center hover:bg-primary/20 transition-colors"
-              >
-                <Icon name="Instagram" size={20} className="text-muted-foreground" />
-              </a>
             </div>
           </div>
 
           <div className="rounded-2xl overflow-hidden h-[300px] sm:h-[400px] lg:h-full border border-border">
             <iframe
-              src="https://yandex.ru/map-widget/v1/?um=constructor%3A7c7f1e8a5e7a3b9d1c2f4e6a8b0d2f4e&source=constructor"
+              src="https://yandex.ru/map-widget/v1/?ll=49.1221%2C55.7963&z=16&pt=49.1221%2C55.7963%2Cpm2rdm"
               width="100%"
               height="100%"
               frameBorder="0"
