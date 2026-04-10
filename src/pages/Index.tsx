@@ -1,207 +1,29 @@
-import { useState, useEffect } from 'react';
-import { useToast } from '@/hooks/use-toast';
-import { useAppState } from '@/hooks/useAppState';
-import { useAppHandlers } from '@/hooks/useAppHandlers';
-import { AppHeader } from '@/components/layout/AppHeader';
-import { AppContent } from '@/components/layout/AppContent';
-import Auth from './Auth';
-import Landing from './Landing';
-import Onboarding from '@/components/Onboarding';
+import { useState } from 'react';
+import Header from '@/components/Header';
+import Hero from '@/components/Hero';
+import Brands from '@/components/Brands';
+import Services from '@/components/Services';
+import Advantages from '@/components/Advantages';
+import Gallery from '@/components/Gallery';
+import Contacts from '@/components/Contacts';
+import Footer from '@/components/Footer';
+import CallbackDialog from '@/components/CallbackDialog';
 
 const Index = () => {
-  const [user, setUser] = useState<any>(null);
-  const [showOnboarding, setShowOnboarding] = useState(false);
-  const [showLanding, setShowLanding] = useState(true);
-  const { toast } = useToast();
-
-  const state = useAppState();
-  const handlers = useAppHandlers({
-    user: user || { accountType: 'personal', subscriptionActive: false },
-    projects: state.projects,
-    setProjects: state.setProjects,
-    employees: state.employees,
-    setEmployees: state.setEmployees,
-    tasks: state.tasks,
-    setTasks: state.setTasks,
-    companyExpenses: state.companyExpenses,
-    setCompanyExpenses: state.setCompanyExpenses,
-    expenseCategories: state.expenseCategories,
-    setExpenseCategories: state.setExpenseCategories,
-    viewingProject: state.viewingProject,
-    selectedStage: state.selectedStage,
-    viewingCategory: state.viewingCategory,
-    setIsProjectDialogOpen: state.setIsProjectDialogOpen,
-    setIsStageDialogOpen: state.setIsStageDialogOpen,
-    setIsEmployeeDialogOpen: state.setIsEmployeeDialogOpen,
-    setIsTaskDialogOpen: state.setIsTaskDialogOpen,
-    setIsExpenseDialogOpen: state.setIsExpenseDialogOpen,
-    setIsCommentDialogOpen: state.setIsCommentDialogOpen,
-    setIsCompanyExpenseDialogOpen: state.setIsCompanyExpenseDialogOpen,
-    setIsExpenseCategoryDialogOpen: state.setIsExpenseCategoryDialogOpen,
-    setIsPaymentDialogOpen: state.setIsPaymentDialogOpen,
-    setIsProjectExpenseDialogOpen: state.setIsProjectExpenseDialogOpen,
-    setIsProjectIncomeDialogOpen: state.setIsProjectIncomeDialogOpen,
-    selectedProjectForTransaction: state.selectedProjectForTransaction,
-    setSelectedProjectForTransaction: state.setSelectedProjectForTransaction,
-    setIsStageExpenseDialogOpen: state.setIsStageExpenseDialogOpen,
-    setIsStageIncomeDialogOpen: state.setIsStageIncomeDialogOpen,
-    selectedStageForTransaction: state.selectedStageForTransaction,
-    setSelectedStageForTransaction: state.setSelectedStageForTransaction,
-    filterProject: state.filterProject,
-    filterDate: state.filterDate,
-    filterMinAmount: state.filterMinAmount,
-    filterMaxAmount: state.filterMaxAmount
-  });
-
-  useEffect(() => {
-    const currentUser = localStorage.getItem('currentUser');
-    if (currentUser) {
-      const userData = JSON.parse(currentUser);
-      setUser(userData);
-      setShowLanding(false);
-      if (userData.firstLogin) {
-        setShowOnboarding(true);
-      }
-    }
-  }, []);
-
-  const handleLogin = (userData: any) => {
-    setUser(userData);
-    setShowLanding(false);
-    localStorage.setItem('currentUser', JSON.stringify(userData));
-    if (userData.firstLogin) {
-      setShowOnboarding(true);
-    }
-  };
-
-  const handleOnboardingComplete = () => {
-    setShowOnboarding(false);
-    if (user.firstLogin) {
-      const updatedUser = { ...user, firstLogin: false };
-      setUser(updatedUser);
-      localStorage.setItem('currentUser', JSON.stringify(updatedUser));
-      localStorage.setItem('user_' + user.phone, JSON.stringify(updatedUser));
-    }
-  };
-
-  const handleUpdateUser = (userData: any) => {
-    setUser(userData);
-  };
-
-  const handleLogout = () => {
-    setUser(null);
-    localStorage.removeItem('currentUser');
-    toast({ title: 'Выход выполнен', description: 'До скорой встречи!' });
-  };
-
-  if (showLanding && !user) {
-    return <Landing onGetStarted={() => setShowLanding(false)} />;
-  }
-
-  if (!user) {
-    return <Auth onLogin={handleLogin} onBackToLanding={() => setShowLanding(true)} />;
-  }
-
-  const sectionProps = {
-    projects: state.projects,
-    employees: state.employees,
-    tasks: state.tasks,
-    companyExpenses: state.companyExpenses,
-    expenseCategories: state.expenseCategories,
-    totalBudget: state.totalBudget,
-    totalSpent: state.totalSpent,
-    totalIncome: state.totalIncome,
-    filterProject: state.filterProject,
-    filterDate: state.filterDate,
-    filterMinAmount: state.filterMinAmount,
-    filterMaxAmount: state.filterMaxAmount,
-    isProjectDialogOpen: state.isProjectDialogOpen,
-    isStageDialogOpen: state.isStageDialogOpen,
-    isEmployeeDialogOpen: state.isEmployeeDialogOpen,
-    isTaskDialogOpen: state.isTaskDialogOpen,
-    isExpenseDialogOpen: state.isExpenseDialogOpen,
-    isCommentDialogOpen: state.isCommentDialogOpen,
-    isCompanyExpenseDialogOpen: state.isCompanyExpenseDialogOpen,
-    isExpenseCategoryDialogOpen: state.isExpenseCategoryDialogOpen,
-    isPaymentDialogOpen: state.isPaymentDialogOpen,
-    isProjectExpenseDialogOpen: state.isProjectExpenseDialogOpen,
-    isProjectIncomeDialogOpen: state.isProjectIncomeDialogOpen,
-    selectedProjectForTransaction: state.selectedProjectForTransaction,
-    isStageExpenseDialogOpen: state.isStageExpenseDialogOpen,
-    isStageIncomeDialogOpen: state.isStageIncomeDialogOpen,
-    selectedStageForTransaction: state.selectedStageForTransaction,
-    selectedStage: state.selectedStage,
-    viewingProject: state.viewingProject,
-    selectedProject: state.selectedProject,
-    viewingCategory: state.viewingCategory,
-    showArchivedEmployees: state.showArchivedEmployees,
-    setActiveSection: state.setActiveSection,
-    setViewingProject: state.setViewingProject,
-    setViewingCategory: state.setViewingCategory,
-    setFilterProject: state.setFilterProject,
-    setFilterDate: state.setFilterDate,
-    setFilterMinAmount: state.setFilterMinAmount,
-    setFilterMaxAmount: state.setFilterMaxAmount,
-    setIsProjectDialogOpen: state.setIsProjectDialogOpen,
-    setIsStageDialogOpen: state.setIsStageDialogOpen,
-    setIsEmployeeDialogOpen: state.setIsEmployeeDialogOpen,
-    setIsTaskDialogOpen: state.setIsTaskDialogOpen,
-    setIsExpenseDialogOpen: state.setIsExpenseDialogOpen,
-    setIsCommentDialogOpen: state.setIsCommentDialogOpen,
-    setIsCompanyExpenseDialogOpen: state.setIsCompanyExpenseDialogOpen,
-    setIsExpenseCategoryDialogOpen: state.setIsExpenseCategoryDialogOpen,
-    setIsPaymentDialogOpen: state.setIsPaymentDialogOpen,
-    setIsProjectExpenseDialogOpen: state.setIsProjectExpenseDialogOpen,
-    setIsProjectIncomeDialogOpen: state.setIsProjectIncomeDialogOpen,
-    setSelectedProjectForTransaction: state.setSelectedProjectForTransaction,
-    setIsStageExpenseDialogOpen: state.setIsStageExpenseDialogOpen,
-    setIsStageIncomeDialogOpen: state.setIsStageIncomeDialogOpen,
-    setSelectedStageForTransaction: state.setSelectedStageForTransaction,
-    setSelectedStage: state.setSelectedStage,
-    setSelectedProject: state.setSelectedProject,
-    setShowArchivedEmployees: state.setShowArchivedEmployees,
-    handleAddProject: handlers.handleAddProject,
-    handleAddStage: handlers.handleAddStage,
-    handleAddEmployee: handlers.handleAddEmployee,
-    handleAddTask: handlers.handleAddTask,
-    handleAddExpense: handlers.handleAddExpense,
-    handleAddComment: handlers.handleAddComment,
-    handleAddCompanyExpense: handlers.handleAddCompanyExpense,
-    handleAddExpenseCategory: handlers.handleAddExpenseCategory,
-    handleAddPayment: handlers.handleAddPayment,
-    handleAddProjectExpense: handlers.handleAddProjectExpense,
-    handleAddProjectIncome: handlers.handleAddProjectIncome,
-    handleAddStageExpense: handlers.handleAddStageExpense,
-    handleAddStageIncome: handlers.handleAddStageIncome,
-    handleArchiveProject: handlers.handleArchiveProject,
-    handleUnarchiveProject: handlers.handleUnarchiveProject,
-    handleArchiveEmployee: handlers.handleArchiveEmployee,
-    handleUnarchiveEmployee: handlers.handleUnarchiveEmployee,
-    getAllExpenses: handlers.getAllExpenses,
-    getFilteredExpenses: handlers.getFilteredExpenses
-  };
+  const [isCallbackOpen, setIsCallbackOpen] = useState(false);
 
   return (
-    <>
-      {showOnboarding && <Onboarding userName={user.name} onComplete={handleOnboardingComplete} />}
-      
-      <div className="min-h-screen bg-gray-50">
-        <AppHeader 
-          user={user}
-          activeSection={state.activeSection}
-          setActiveSection={state.setActiveSection}
-          handleLogout={handleLogout}
-        />
-
-        <AppContent 
-          activeSection={state.activeSection}
-          user={user}
-          handleLogout={handleLogout}
-          onUpdateUser={handleUpdateUser}
-          sectionProps={sectionProps}
-        />
-      </div>
-    </>
+    <div className="min-h-screen bg-background">
+      <Header onCallback={() => setIsCallbackOpen(true)} />
+      <Hero onCallback={() => setIsCallbackOpen(true)} />
+      <Brands />
+      <Services />
+      <Advantages />
+      <Gallery />
+      <Contacts />
+      <Footer />
+      <CallbackDialog open={isCallbackOpen} onOpenChange={setIsCallbackOpen} />
+    </div>
   );
 };
 
